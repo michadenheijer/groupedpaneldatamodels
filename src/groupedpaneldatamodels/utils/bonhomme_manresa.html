@@ -401,7 +401,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <pre class="cython line score-0">&#xA0;<span class="">021</span>: <span class="c"># Helper functions</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">022</span>: <span class="c"># -----------------------------------------------------------------------------</span></pre>
 <pre class="cython line score-55" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">023</span>: <span class="k">cdef</span><span class="w"> </span><span class="kr">inline</span> <span class="kt">tuple</span> <span class="nf">_get_starting_values</span><span class="p">(</span></pre>
-<pre class='cython code score-55 '>static CYTHON_INLINE PyObject *__pyx_f_16bonhomme_manresa__get_starting_values(PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_x, int __pyx_v_G, int __pyx_v_N, int __pyx_v_K) {
+<pre class='cython code score-55 '>static CYTHON_INLINE PyObject *__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__get_starting_values(PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_x, int __pyx_v_G, int __pyx_v_N, int __pyx_v_K) {
   int __pyx_v_num_start_vars;
   PyArrayObject *__pyx_v_idx_theta = 0;
   PyArrayObject *__pyx_v_X0 = 0;
@@ -460,12 +460,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_pybuffernd_x.rcbuffer = &amp;__pyx_pybuffer_x;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 23, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 23, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_y.diminfo[0].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_y.diminfo[0].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_y.diminfo[1].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_y.diminfo[1].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_y.diminfo[2].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_y.diminfo[2].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[2];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_x, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 23, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_x, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 23, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_x.diminfo[0].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_x.diminfo[0].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_x.diminfo[1].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_x.diminfo[1].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_x.diminfo[2].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_x.diminfo[2].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[2];
 /* … */
@@ -491,7 +491,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer);
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer);
   <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa._get_starting_values", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa._get_starting_values", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -638,7 +638,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_8 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_X0.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_8, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_X0.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_8, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_X0 = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_X0.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 36, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_X0.diminfo[0].strides = __pyx_pybuffernd_X0.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_X0.diminfo[0].shape = __pyx_pybuffernd_X0.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_X0.diminfo[1].strides = __pyx_pybuffernd_X0.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_X0.diminfo[1].shape = __pyx_pybuffernd_X0.rcbuffer-&gt;pybuffer.shape[1];
@@ -660,7 +660,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_9 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_Y0.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_9, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_Y0.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_9, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_Y0 = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_Y0.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 37, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_Y0.diminfo[0].strides = __pyx_pybuffernd_Y0.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_Y0.diminfo[0].shape = __pyx_pybuffernd_Y0.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_Y0.diminfo[1].strides = __pyx_pybuffernd_Y0.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_Y0.diminfo[1].shape = __pyx_pybuffernd_Y0.rcbuffer-&gt;pybuffer.shape[1];
@@ -705,7 +705,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_10 = ((PyArrayObject *)__pyx_t_4);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta_init.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_10, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta_init.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_10, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_theta_init = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_theta_init.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 38, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_theta_init.diminfo[0].strides = __pyx_pybuffernd_theta_init.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_theta_init.diminfo[0].shape = __pyx_pybuffernd_theta_init.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_theta_init.diminfo[1].strides = __pyx_pybuffernd_theta_init.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_theta_init.diminfo[1].shape = __pyx_pybuffernd_theta_init.rcbuffer-&gt;pybuffer.shape[1];
@@ -807,7 +807,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_14 = ((PyArrayObject *)__pyx_t_4);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha_init.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_14, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha_init.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_14, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_alpha_init = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_alpha_init.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 45, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_alpha_init.diminfo[0].strides = __pyx_pybuffernd_alpha_init.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_alpha_init.diminfo[0].shape = __pyx_pybuffernd_alpha_init.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_alpha_init.diminfo[1].strides = __pyx_pybuffernd_alpha_init.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_alpha_init.diminfo[1].shape = __pyx_pybuffernd_alpha_init.rcbuffer-&gt;pybuffer.shape[1];
@@ -893,7 +893,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </pre><pre class="cython line score-0">&#xA0;<span class="">049</span>: </pre>
 <pre class="cython line score-0">&#xA0;<span class="">050</span>: </pre>
 <pre class="cython line score-27" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">051</span>: <span class="k">cdef</span><span class="w"> </span><span class="kr">inline</span> <span class="kt">np</span>.<span class="kt">ndarray</span>[<span class="kt">np</span>.<span class="nf">intp_t</span><span class="p">,</span> <span class="nf">ndim</span><span class="o">=</span><span class="mf">1</span><span class="p">]</span> <span class="n">_compute_groupings</span><span class="p">(</span></pre>
-<pre class='cython code score-27 '>static CYTHON_INLINE PyArrayObject *__pyx_f_16bonhomme_manresa__compute_groupings(PyArrayObject *__pyx_v_res, PyArrayObject *__pyx_v_alpha) {
+<pre class='cython code score-27 '>static CYTHON_INLINE PyArrayObject *__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_groupings(PyArrayObject *__pyx_v_res, PyArrayObject *__pyx_v_alpha) {
   PyArrayObject *__pyx_v_dist = 0;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_alpha;
   __Pyx_Buffer __pyx_pybuffer_alpha;
@@ -916,12 +916,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_pybuffernd_alpha.rcbuffer = &amp;__pyx_pybuffer_alpha;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 51, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 51, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_res.diminfo[0].strides = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_res.diminfo[0].shape = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_res.diminfo[1].strides = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_res.diminfo[1].shape = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 51, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 51, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_alpha.diminfo[0].strides = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_alpha.diminfo[0].shape = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_alpha.diminfo[1].strides = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_alpha.diminfo[1].shape = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.shape[1];
 /* … */
@@ -939,7 +939,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_dist.rcbuffer-&gt;pybuffer);
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer);
   <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa._compute_groupings", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa._compute_groupings", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -993,7 +993,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_4 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_dist.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_4, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_dist.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_4, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_dist = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_dist.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 59, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_dist.diminfo[0].strides = __pyx_pybuffernd_dist.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_dist.diminfo[0].shape = __pyx_pybuffernd_dist.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_dist.diminfo[1].strides = __pyx_pybuffernd_dist.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_dist.diminfo[1].shape = __pyx_pybuffernd_dist.rcbuffer-&gt;pybuffer.shape[1];
@@ -1033,7 +1033,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </pre><pre class="cython line score-0">&#xA0;<span class="">063</span>: </pre>
 <pre class="cython line score-0">&#xA0;<span class="">064</span>: </pre>
 <pre class="cython line score-33" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">065</span>: <span class="k">cdef</span><span class="w"> </span><span class="kr">inline</span> <span class="kt">np</span>.<span class="kt">ndarray</span>[<span class="nf">DTYPE_t</span><span class="p">,</span> <span class="nf">ndim</span><span class="o">=</span><span class="mf">2</span><span class="p">]</span> <span class="n">_compute_alpha</span><span class="p">(</span></pre>
-<pre class='cython code score-33 '>static CYTHON_INLINE PyArrayObject *__pyx_f_16bonhomme_manresa__compute_alpha(PyArrayObject *__pyx_v_res, PyArrayObject *__pyx_v_g, int __pyx_v_G) {
+<pre class='cython code score-33 '>static CYTHON_INLINE PyArrayObject *__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_alpha(PyArrayObject *__pyx_v_res, PyArrayObject *__pyx_v_g, int __pyx_v_G) {
   PyArrayObject *__pyx_v_counts = 0;
   PyArrayObject *__pyx_v_sums = 0;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_counts;
@@ -1063,7 +1063,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_pybuffernd_g.rcbuffer = &amp;__pyx_pybuffer_g;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 65, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 65, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_res.diminfo[0].strides = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_res.diminfo[0].shape = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_res.diminfo[1].strides = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_res.diminfo[1].shape = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.shape[1];
   {
@@ -1088,7 +1088,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer);
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer);
   <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa._compute_alpha", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa._compute_alpha", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -1202,7 +1202,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_8 = ((PyArrayObject *)__pyx_t_3);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_8, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_8, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_sums = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 75, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_sums.diminfo[0].strides = __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_sums.diminfo[0].shape = __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_sums.diminfo[1].strides = __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_sums.diminfo[1].shape = __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.shape[1];
@@ -1289,7 +1289,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <pre class="cython line score-0">&#xA0;<span class="">084</span>: <span class="nd">@cython</span><span class="o">.</span><span class="n">boundscheck</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">085</span>: <span class="nd">@cython</span><span class="o">.</span><span class="n">wraparound</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span></pre>
 <pre class="cython line score-33" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">086</span>: <span class="k">cdef</span><span class="w"> </span><span class="kr">inline</span> <span class="kt">np</span>.<span class="kt">ndarray</span>[<span class="nf">DTYPE_t</span><span class="p">,</span> <span class="nf">ndim</span><span class="o">=</span><span class="mf">2</span><span class="p">]</span> <span class="n">_compute_alpha_fast</span><span class="p">(</span></pre>
-<pre class='cython code score-33 '>static CYTHON_INLINE PyArrayObject *__pyx_f_16bonhomme_manresa__compute_alpha_fast(PyArrayObject *__pyx_v_res, PyArrayObject *__pyx_v_g, int __pyx_v_G) {
+<pre class='cython code score-33 '>static CYTHON_INLINE PyArrayObject *__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_alpha_fast(PyArrayObject *__pyx_v_res, PyArrayObject *__pyx_v_g, int __pyx_v_G) {
   int __pyx_v_N;
   int __pyx_v_L;
   PyArrayObject *__pyx_v_sums = 0;
@@ -1324,7 +1324,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_pybuffernd_g.rcbuffer = &amp;__pyx_pybuffer_g;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 86, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 86, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_res.diminfo[0].strides = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_res.diminfo[0].shape = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_res.diminfo[1].strides = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_res.diminfo[1].shape = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.shape[1];
   {
@@ -1349,7 +1349,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer);
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer);
   <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa._compute_alpha_fast", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa._compute_alpha_fast", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -1412,7 +1412,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_5 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_5, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_5, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_sums = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 95, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_sums.diminfo[0].strides = __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_sums.diminfo[0].shape = __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_sums.diminfo[1].strides = __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_sums.diminfo[1].shape = __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.shape[1];
@@ -1483,7 +1483,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
       __pyx_t_15 = __pyx_v_l;
       __pyx_t_16 = __pyx_v_gi;
       __pyx_t_17 = __pyx_v_l;
-      *__Pyx_BufPtrStrided2d(__pyx_t_16bonhomme_manresa_DTYPE_t *, __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_sums.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_sums.diminfo[1].strides) += (*__Pyx_BufPtrStrided2d(__pyx_t_16bonhomme_manresa_DTYPE_t *, __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_res.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_res.diminfo[1].strides));
+      *__Pyx_BufPtrStrided2d(__pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t *, __pyx_pybuffernd_sums.rcbuffer-&gt;pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_sums.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_sums.diminfo[1].strides) += (*__Pyx_BufPtrStrided2d(__pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t *, __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_res.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_res.diminfo[1].strides));
     }
   }
 </pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">103</span>:     <span class="k">for</span> <span class="n">gi</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">G</span><span class="p">):</span></pre>
@@ -1528,7 +1528,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   goto __pyx_L0;
 </pre><pre class="cython line score-0">&#xA0;<span class="">107</span>: </pre>
 <pre class="cython line score-40" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">108</span>: <span class="k">cdef</span><span class="w"> </span><span class="kr">inline</span> <span class="kt">np</span>.<span class="kt">ndarray</span>[<span class="nf">DTYPE_t</span><span class="p">,</span> <span class="nf">ndim</span><span class="o">=</span><span class="mf">2</span><span class="p">]</span> <span class="n">_compute_theta</span><span class="p">(</span></pre>
-<pre class='cython code score-40 '>static CYTHON_INLINE PyArrayObject *__pyx_f_16bonhomme_manresa__compute_theta(PyArrayObject *__pyx_v_x, PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_alpha, PyArrayObject *__pyx_v_g) {
+<pre class='cython code score-40 '>static CYTHON_INLINE PyArrayObject *__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_theta(PyArrayObject *__pyx_v_x, PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_alpha, PyArrayObject *__pyx_v_g) {
   int __pyx_v_K;
   PyArrayObject *__pyx_v_theta = 0;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_alpha;
@@ -1564,17 +1564,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_pybuffernd_g.rcbuffer = &amp;__pyx_pybuffer_g;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_x, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 108, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_x, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 108, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_x.diminfo[0].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_x.diminfo[0].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_x.diminfo[1].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_x.diminfo[1].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_x.diminfo[2].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_x.diminfo[2].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[2];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 108, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 108, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_y.diminfo[0].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_y.diminfo[0].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_y.diminfo[1].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_y.diminfo[1].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_y.diminfo[2].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_y.diminfo[2].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[2];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 108, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 108, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_alpha.diminfo[0].strides = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_alpha.diminfo[0].shape = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_alpha.diminfo[1].strides = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_alpha.diminfo[1].shape = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.shape[1];
   {
@@ -1600,7 +1600,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer);
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer);
   <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa._compute_theta", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa._compute_theta", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -1708,7 +1708,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_7 = ((PyArrayObject *)__pyx_t_3);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_7, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_7, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_theta = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 118, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_theta.diminfo[1].strides = __pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_theta.diminfo[1].shape = __pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer.shape[1];
@@ -1728,7 +1728,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <pre class="cython line score-0">&#xA0;<span class="">127</span>: <span class="c"># Fast θ̂ update using precomputed X&#39;X and X&#39;</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">128</span>: <span class="c"># ---------------------------------------------------------------------------</span></pre>
 <pre class="cython line score-45" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">129</span>: <span class="k">cdef</span><span class="w"> </span><span class="kr">inline</span> <span class="kt">np</span>.<span class="kt">ndarray</span>[<span class="nf">DTYPE_t</span><span class="p">,</span> <span class="nf">ndim</span><span class="o">=</span><span class="mf">2</span><span class="p">]</span> <span class="n">_compute_theta_fast</span><span class="p">(</span></pre>
-<pre class='cython code score-45 '>static CYTHON_INLINE PyArrayObject *__pyx_f_16bonhomme_manresa__compute_theta_fast(PyArrayObject *__pyx_v_XtX, PyArrayObject *__pyx_v_Xt, PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_alpha, PyArrayObject *__pyx_v_g) {
+<pre class='cython code score-45 '>static CYTHON_INLINE PyArrayObject *__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_theta_fast(PyArrayObject *__pyx_v_XtX, PyArrayObject *__pyx_v_Xt, PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_alpha, PyArrayObject *__pyx_v_g) {
   PyArrayObject *__pyx_v_XtY = 0;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_Xt;
   __Pyx_Buffer __pyx_pybuffer_Xt;
@@ -1769,22 +1769,22 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_pybuffernd_g.rcbuffer = &amp;__pyx_pybuffer_g;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_XtX, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 129, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_XtX, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 129, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_XtX.diminfo[0].strides = __pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_XtX.diminfo[0].shape = __pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_XtX.diminfo[1].strides = __pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_XtX.diminfo[1].shape = __pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_Xt, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 129, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_Xt, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 129, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_Xt.diminfo[0].strides = __pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_Xt.diminfo[0].shape = __pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_Xt.diminfo[1].strides = __pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_Xt.diminfo[1].shape = __pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 129, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 129, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_y.diminfo[0].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_y.diminfo[0].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_y.diminfo[1].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_y.diminfo[1].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_y.diminfo[2].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_y.diminfo[2].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[2];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 129, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 129, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_alpha.diminfo[0].strides = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_alpha.diminfo[0].shape = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_alpha.diminfo[1].strides = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_alpha.diminfo[1].shape = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.shape[1];
   {
@@ -1810,7 +1810,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_g.rcbuffer-&gt;pybuffer);
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer);
   <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa._compute_theta_fast", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa._compute_theta_fast", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -1845,7 +1845,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_6 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_XtY.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_6, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_XtY.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_6, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_XtY = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_XtY.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 138, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_XtY.diminfo[0].strides = __pyx_pybuffernd_XtY.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_XtY.diminfo[0].shape = __pyx_pybuffernd_XtY.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_XtY.diminfo[1].strides = __pyx_pybuffernd_XtY.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_XtY.diminfo[1].shape = __pyx_pybuffernd_XtY.rcbuffer-&gt;pybuffer.shape[1];
@@ -1931,7 +1931,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </pre><pre class="cython line score-0">&#xA0;<span class="">141</span>: </pre>
 <pre class="cython line score-0">&#xA0;<span class="">142</span>: </pre>
 <pre class="cython line score-29" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">143</span>: <span class="k">cdef</span><span class="w"> </span><span class="kr">inline</span> <span class="kt">np</span>.<span class="kt">ndarray</span>[<span class="nf">DTYPE_t</span><span class="p">,</span> <span class="nf">ndim</span><span class="o">=</span><span class="mf">2</span><span class="p">]</span> <span class="n">_compute_residuals</span><span class="p">(</span></pre>
-<pre class='cython code score-29 '>static CYTHON_INLINE PyArrayObject *__pyx_f_16bonhomme_manresa__compute_residuals(PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_x, PyArrayObject *__pyx_v_theta) {
+<pre class='cython code score-29 '>static CYTHON_INLINE PyArrayObject *__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_residuals(PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_x, PyArrayObject *__pyx_v_theta) {
   __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
   __Pyx_Buffer __pyx_pybuffer_theta;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_x;
@@ -1953,17 +1953,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_pybuffernd_theta.rcbuffer = &amp;__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 143, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 143, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_y.diminfo[0].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_y.diminfo[0].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_y.diminfo[1].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_y.diminfo[1].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_y.diminfo[2].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_y.diminfo[2].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[2];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_x, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 143, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_x, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 143, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_x.diminfo[0].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_x.diminfo[0].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_x.diminfo[1].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_x.diminfo[1].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_x.diminfo[2].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_x.diminfo[2].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[2];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_theta, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 143, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_theta, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 143, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_theta.diminfo[1].strides = __pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_theta.diminfo[1].shape = __pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer.shape[1];
 /* … */
@@ -1982,7 +1982,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer);
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer);
   <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa._compute_residuals", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa._compute_residuals", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -2067,7 +2067,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </pre><pre class="cython line score-0">&#xA0;<span class="">151</span>: </pre>
 <pre class="cython line score-0">&#xA0;<span class="">152</span>: </pre>
 <pre class="cython line score-27" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">153</span>: <span class="k">cdef</span><span class="w"> </span><span class="kr">inline</span> <span class="kt">double</span> <span class="nf">_compute_objective_value</span><span class="p">(</span></pre>
-<pre class='cython code score-27 '>static CYTHON_INLINE double __pyx_f_16bonhomme_manresa__compute_objective_value(PyArrayObject *__pyx_v_res, PyArrayObject *__pyx_v_alpha, PyArrayObject *__pyx_v_g) {
+<pre class='cython code score-27 '>static CYTHON_INLINE double __pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_objective_value(PyArrayObject *__pyx_v_res, PyArrayObject *__pyx_v_alpha, PyArrayObject *__pyx_v_g) {
   __Pyx_LocalBuf_ND __pyx_pybuffernd_alpha;
   __Pyx_Buffer __pyx_pybuffer_alpha;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_g;
@@ -2089,12 +2089,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_pybuffernd_g.rcbuffer = &amp;__pyx_pybuffer_g;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 153, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 153, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_res.diminfo[0].strides = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_res.diminfo[0].shape = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_res.diminfo[1].strides = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_res.diminfo[1].shape = __pyx_pybuffernd_res.rcbuffer-&gt;pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 153, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 153, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_alpha.diminfo[0].strides = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_alpha.diminfo[0].shape = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_alpha.diminfo[1].strides = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_alpha.diminfo[1].shape = __pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer.shape[1];
   {
@@ -2116,7 +2116,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_g.rcbuffer-&gt;pybuffer);
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer);
   <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa._compute_objective_value", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa._compute_objective_value", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   goto __pyx_L2;
   __pyx_L0:;
@@ -2178,7 +2178,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <pre class="cython line score-0">&#xA0;<span class="">165</span>: <span class="c"># -----------------------------------------------------------------------------</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">166</span>: </pre>
 <pre class="cython line score-57" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">167</span>: <span class="k">cdef</span><span class="w"> </span><span class="kt">tuple</span> <span class="nf">_gfe_iteration</span><span class="p">(</span></pre>
-<pre class='cython code score-57 '>static PyObject *__pyx_f_16bonhomme_manresa__gfe_iteration(PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_x, int __pyx_v_G, int __pyx_v_N, int __pyx_v_K, int __pyx_v_max_iter, double __pyx_v_tol) {
+<pre class='cython code score-57 '>static PyObject *__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__gfe_iteration(PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_x, int __pyx_v_G, int __pyx_v_N, int __pyx_v_K, int __pyx_v_max_iter, double __pyx_v_tol) {
   PyArrayObject *__pyx_v_theta = 0;
   PyArrayObject *__pyx_v_alpha = 0;
   PyArrayObject *__pyx_v_g = 0;
@@ -2246,12 +2246,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_pybuffernd_x.rcbuffer = &amp;__pyx_pybuffer_x;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 167, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 167, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_y.diminfo[0].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_y.diminfo[0].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_y.diminfo[1].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_y.diminfo[1].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_y.diminfo[2].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_y.diminfo[2].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[2];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_x, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 167, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_x, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 167, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_x.diminfo[0].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_x.diminfo[0].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_x.diminfo[1].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_x.diminfo[1].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_x.diminfo[2].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_x.diminfo[2].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[2];
 /* … */
@@ -2275,7 +2275,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer);
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer);
   <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa._gfe_iteration", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa._gfe_iteration", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -2348,7 +2348,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_6 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_X_flat.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_6, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_X_flat.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_6, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_X_flat = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_X_flat.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 182, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_X_flat.diminfo[0].strides = __pyx_pybuffernd_X_flat.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_X_flat.diminfo[0].shape = __pyx_pybuffernd_X_flat.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_X_flat.diminfo[1].strides = __pyx_pybuffernd_X_flat.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_X_flat.diminfo[1].shape = __pyx_pybuffernd_X_flat.rcbuffer-&gt;pybuffer.shape[1];
@@ -2364,7 +2364,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_7 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_7, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_7, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_Xt = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 183, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_Xt.diminfo[0].strides = __pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_Xt.diminfo[0].shape = __pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_Xt.diminfo[1].strides = __pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_Xt.diminfo[1].shape = __pyx_pybuffernd_Xt.rcbuffer-&gt;pybuffer.shape[1];
@@ -2405,7 +2405,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_8 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_8, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_8, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_XtX = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 184, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_XtX.diminfo[0].strides = __pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_XtX.diminfo[0].shape = __pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_XtX.diminfo[1].strides = __pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_XtX.diminfo[1].shape = __pyx_pybuffernd_XtX.rcbuffer-&gt;pybuffer.shape[1];
@@ -2416,7 +2416,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_t_1 = 0;
 </pre><pre class="cython line score-0">&#xA0;<span class="">185</span>: </pre>
 <pre class="cython line score-55" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">186</span>:     <span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">_get_starting_values</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span></pre>
-<pre class='cython code score-55 '>  __pyx_t_1 = __pyx_f_16bonhomme_manresa__get_starting_values(((PyArrayObject *)__pyx_v_y), ((PyArrayObject *)__pyx_v_x), __pyx_v_G, __pyx_v_N, __pyx_v_K);<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)</span>
+<pre class='cython code score-55 '>  __pyx_t_1 = __pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__get_starting_values(((PyArrayObject *)__pyx_v_y), ((PyArrayObject *)__pyx_v_x), __pyx_v_G, __pyx_v_N, __pyx_v_K);<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
   if (likely(__pyx_t_1 != Py_None)) {
     PyObject* sequence = __pyx_t_1;
@@ -2447,10 +2447,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer);
-    __pyx_t_10 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_9, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
+    __pyx_t_10 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_9, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
     if (unlikely(__pyx_t_10 &lt; 0)) {
       <span class='py_c_api'>PyErr_Fetch</span>(&amp;__pyx_t_11, &amp;__pyx_t_12, &amp;__pyx_t_13);
-      if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_theta, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+      if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_theta, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
         Py_XDECREF(__pyx_t_11); Py_XDECREF(__pyx_t_12); Py_XDECREF(__pyx_t_13);
         <span class='pyx_c_api'>__Pyx_RaiseBufferFallbackError</span>();
       } else {
@@ -2468,10 +2468,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer);
-    __pyx_t_10 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_9, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
+    __pyx_t_10 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_9, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
     if (unlikely(__pyx_t_10 &lt; 0)) {
       <span class='py_c_api'>PyErr_Fetch</span>(&amp;__pyx_t_13, &amp;__pyx_t_12, &amp;__pyx_t_11);
-      if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+      if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
         Py_XDECREF(__pyx_t_13); Py_XDECREF(__pyx_t_12); Py_XDECREF(__pyx_t_11);
         <span class='pyx_c_api'>__Pyx_RaiseBufferFallbackError</span>();
       } else {
@@ -2486,15 +2486,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_v_alpha = ((PyArrayObject *)__pyx_t_2);
   __pyx_t_2 = 0;
 </pre><pre class="cython line score-18" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">187</span>:     <span class="n">res</span> <span class="o">=</span> <span class="n">_compute_residuals</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span></pre>
-<pre class='cython code score-18 '>  __pyx_t_1 = ((PyObject *)__pyx_f_16bonhomme_manresa__compute_residuals(((PyArrayObject *)__pyx_v_y), ((PyArrayObject *)__pyx_v_x), ((PyArrayObject *)__pyx_v_theta)));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L1_error)</span>
+<pre class='cython code score-18 '>  __pyx_t_1 = ((PyObject *)__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_residuals(((PyArrayObject *)__pyx_v_y), ((PyArrayObject *)__pyx_v_x), ((PyArrayObject *)__pyx_v_theta)));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer);
-    __pyx_t_10 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
+    __pyx_t_10 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
     if (unlikely(__pyx_t_10 &lt; 0)) {
       <span class='py_c_api'>PyErr_Fetch</span>(&amp;__pyx_t_11, &amp;__pyx_t_12, &amp;__pyx_t_13);
-      if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+      if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
         Py_XDECREF(__pyx_t_11); Py_XDECREF(__pyx_t_12); Py_XDECREF(__pyx_t_13);
         <span class='pyx_c_api'>__Pyx_RaiseBufferFallbackError</span>();
       } else {
@@ -2508,7 +2508,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   __pyx_v_res = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 </pre><pre class="cython line score-18" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">188</span>:     <span class="n">g</span> <span class="o">=</span> <span class="n">_compute_groupings</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></pre>
-<pre class='cython code score-18 '>  __pyx_t_1 = ((PyObject *)__pyx_f_16bonhomme_manresa__compute_groupings(((PyArrayObject *)__pyx_v_res), ((PyArrayObject *)__pyx_v_alpha)));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)</span>
+<pre class='cython code score-18 '>  __pyx_t_1 = ((PyObject *)__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_groupings(((PyArrayObject *)__pyx_v_res), ((PyArrayObject *)__pyx_v_alpha)));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -2536,15 +2536,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   for (__pyx_t_15 = 0; __pyx_t_15 &lt; __pyx_t_14; __pyx_t_15+=1) {
     __pyx_v_it_used = __pyx_t_15;
 </pre><pre class="cython line score-19" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">191</span>:         <span class="n">alpha</span> <span class="o">=</span> <span class="n">_compute_alpha_fast</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">G</span><span class="p">)</span></pre>
-<pre class='cython code score-19 '>    __pyx_t_1 = ((PyObject *)__pyx_f_16bonhomme_manresa__compute_alpha_fast(((PyArrayObject *)__pyx_v_res), ((PyArrayObject *)__pyx_v_g), __pyx_v_G));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L1_error)</span>
+<pre class='cython code score-19 '>    __pyx_t_1 = ((PyObject *)__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_alpha_fast(((PyArrayObject *)__pyx_v_res), ((PyArrayObject *)__pyx_v_g), __pyx_v_G));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L1_error)</span>
     <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
       <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer);
-      __pyx_t_16 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
+      __pyx_t_16 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
       if (unlikely(__pyx_t_16 &lt; 0)) {
         <span class='py_c_api'>PyErr_Fetch</span>(&amp;__pyx_t_11, &amp;__pyx_t_12, &amp;__pyx_t_13);
-        if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+        if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
           Py_XDECREF(__pyx_t_11); Py_XDECREF(__pyx_t_12); Py_XDECREF(__pyx_t_13);
           <span class='pyx_c_api'>__Pyx_RaiseBufferFallbackError</span>();
         } else {
@@ -2558,15 +2558,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_macro_api'>__Pyx_DECREF_SET</span>(__pyx_v_alpha, ((PyArrayObject *)__pyx_t_1));
     __pyx_t_1 = 0;
 </pre><pre class="cython line score-19" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">192</span>:         <span class="n">theta</span> <span class="o">=</span> <span class="n">_compute_theta_fast</span><span class="p">(</span><span class="n">XtX</span><span class="p">,</span> <span class="n">Xt</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span></pre>
-<pre class='cython code score-19 '>    __pyx_t_1 = ((PyObject *)__pyx_f_16bonhomme_manresa__compute_theta_fast(((PyArrayObject *)__pyx_v_XtX), ((PyArrayObject *)__pyx_v_Xt), ((PyArrayObject *)__pyx_v_y), ((PyArrayObject *)__pyx_v_alpha), ((PyArrayObject *)__pyx_v_g)));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)</span>
+<pre class='cython code score-19 '>    __pyx_t_1 = ((PyObject *)__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_theta_fast(((PyArrayObject *)__pyx_v_XtX), ((PyArrayObject *)__pyx_v_Xt), ((PyArrayObject *)__pyx_v_y), ((PyArrayObject *)__pyx_v_alpha), ((PyArrayObject *)__pyx_v_g)));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)</span>
     <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
       <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer);
-      __pyx_t_16 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
+      __pyx_t_16 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
       if (unlikely(__pyx_t_16 &lt; 0)) {
         <span class='py_c_api'>PyErr_Fetch</span>(&amp;__pyx_t_13, &amp;__pyx_t_12, &amp;__pyx_t_11);
-        if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_theta, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+        if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_theta, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
           Py_XDECREF(__pyx_t_13); Py_XDECREF(__pyx_t_12); Py_XDECREF(__pyx_t_11);
           <span class='pyx_c_api'>__Pyx_RaiseBufferFallbackError</span>();
         } else {
@@ -2580,15 +2580,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_macro_api'>__Pyx_DECREF_SET</span>(__pyx_v_theta, ((PyArrayObject *)__pyx_t_1));
     __pyx_t_1 = 0;
 </pre><pre class="cython line score-19" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">193</span>:         <span class="n">res</span> <span class="o">=</span> <span class="n">_compute_residuals</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span></pre>
-<pre class='cython code score-19 '>    __pyx_t_1 = ((PyObject *)__pyx_f_16bonhomme_manresa__compute_residuals(((PyArrayObject *)__pyx_v_y), ((PyArrayObject *)__pyx_v_x), ((PyArrayObject *)__pyx_v_theta)));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 193, __pyx_L1_error)</span>
+<pre class='cython code score-19 '>    __pyx_t_1 = ((PyObject *)__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_residuals(((PyArrayObject *)__pyx_v_y), ((PyArrayObject *)__pyx_v_x), ((PyArrayObject *)__pyx_v_theta)));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 193, __pyx_L1_error)</span>
     <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
       <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer);
-      __pyx_t_16 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
+      __pyx_t_16 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
       if (unlikely(__pyx_t_16 &lt; 0)) {
         <span class='py_c_api'>PyErr_Fetch</span>(&amp;__pyx_t_11, &amp;__pyx_t_12, &amp;__pyx_t_13);
-        if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+        if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_res.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_res, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
           Py_XDECREF(__pyx_t_11); Py_XDECREF(__pyx_t_12); Py_XDECREF(__pyx_t_13);
           <span class='pyx_c_api'>__Pyx_RaiseBufferFallbackError</span>();
         } else {
@@ -2602,15 +2602,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_macro_api'>__Pyx_DECREF_SET</span>(__pyx_v_res, ((PyArrayObject *)__pyx_t_1));
     __pyx_t_1 = 0;
 </pre><pre class="cython line score-19" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">194</span>:         <span class="n">alpha</span> <span class="o">=</span> <span class="n">_compute_alpha_fast</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">G</span><span class="p">)</span></pre>
-<pre class='cython code score-19 '>    __pyx_t_1 = ((PyObject *)__pyx_f_16bonhomme_manresa__compute_alpha_fast(((PyArrayObject *)__pyx_v_res), ((PyArrayObject *)__pyx_v_g), __pyx_v_G));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 194, __pyx_L1_error)</span>
+<pre class='cython code score-19 '>    __pyx_t_1 = ((PyObject *)__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_alpha_fast(((PyArrayObject *)__pyx_v_res), ((PyArrayObject *)__pyx_v_g), __pyx_v_G));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 194, __pyx_L1_error)</span>
     <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
       <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer);
-      __pyx_t_16 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
+      __pyx_t_16 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
       if (unlikely(__pyx_t_16 &lt; 0)) {
         <span class='py_c_api'>PyErr_Fetch</span>(&amp;__pyx_t_13, &amp;__pyx_t_12, &amp;__pyx_t_11);
-        if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+        if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
           Py_XDECREF(__pyx_t_13); Py_XDECREF(__pyx_t_12); Py_XDECREF(__pyx_t_11);
           <span class='pyx_c_api'>__Pyx_RaiseBufferFallbackError</span>();
         } else {
@@ -2624,7 +2624,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class='pyx_macro_api'>__Pyx_DECREF_SET</span>(__pyx_v_alpha, ((PyArrayObject *)__pyx_t_1));
     __pyx_t_1 = 0;
 </pre><pre class="cython line score-19" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">195</span>:         <span class="n">g</span> <span class="o">=</span> <span class="n">_compute_groupings</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></pre>
-<pre class='cython code score-19 '>    __pyx_t_1 = ((PyObject *)__pyx_f_16bonhomme_manresa__compute_groupings(((PyArrayObject *)__pyx_v_res), ((PyArrayObject *)__pyx_v_alpha)));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 195, __pyx_L1_error)</span>
+<pre class='cython code score-19 '>    __pyx_t_1 = ((PyObject *)__pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_groupings(((PyArrayObject *)__pyx_v_res), ((PyArrayObject *)__pyx_v_alpha)));<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 195, __pyx_L1_error)</span>
     <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -2647,7 +2647,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     __pyx_t_1 = 0;
 </pre><pre class="cython line score-0">&#xA0;<span class="">196</span>: </pre>
 <pre class="cython line score-5" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">197</span>:         <span class="n">new_obj</span> <span class="o">=</span> <span class="n">_compute_objective_value</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span></pre>
-<pre class='cython code score-5 '>    __pyx_t_17 = __pyx_f_16bonhomme_manresa__compute_objective_value(((PyArrayObject *)__pyx_v_res), ((PyArrayObject *)__pyx_v_alpha), ((PyArrayObject *)__pyx_v_g)); if (unlikely(__pyx_t_17 == ((double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) <span class='error_goto'>__PYX_ERR(0, 197, __pyx_L1_error)</span>
+<pre class='cython code score-5 '>    __pyx_t_17 = __pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__compute_objective_value(((PyArrayObject *)__pyx_v_res), ((PyArrayObject *)__pyx_v_alpha), ((PyArrayObject *)__pyx_v_g)); if (unlikely(__pyx_t_17 == ((double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) <span class='error_goto'>__PYX_ERR(0, 197, __pyx_L1_error)</span>
     __pyx_v_new_obj = __pyx_t_17;
 </pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">198</span>:         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">old_obj</span> <span class="o">-</span> <span class="n">new_obj</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span></pre>
 <pre class='cython code score-0 '>    __pyx_t_18 = (fabs((__pyx_v_old_obj - __pyx_v_new_obj)) &lt; __pyx_v_tol);
@@ -2694,16 +2694,16 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <pre class="cython line score-0">&#xA0;<span class="">207</span>: <span class="c"># -----------------------------------------------------------------------------</span></pre>
 <pre class="cython line score-204" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">208</span>: <span class="k">def</span><span class="w"> </span><span class="nf">grouped_fixed_effects</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">DTYPE_t</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mf">3</span><span class="p">]</span> <span class="n">y</span><span class="p">,</span></pre>
 <pre class='cython code score-204 '>/* Python wrapper */
-static PyObject *__pyx_pw_16bonhomme_manresa_1grouped_fixed_effects(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_22groupedpaneldatamodels_5utils_16bonhomme_manresa_1grouped_fixed_effects(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-<span class='py_macro_api'>PyDoc_STRVAR</span>(__pyx_doc_16bonhomme_manresa_grouped_fixed_effects, "\n    Run several random starts and return the best solution.\n    ");
-static PyMethodDef __pyx_mdef_16bonhomme_manresa_1grouped_fixed_effects = {"grouped_fixed_effects", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_16bonhomme_manresa_1grouped_fixed_effects, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_16bonhomme_manresa_grouped_fixed_effects};
-static PyObject *__pyx_pw_16bonhomme_manresa_1grouped_fixed_effects(PyObject *__pyx_self, 
+<span class='py_macro_api'>PyDoc_STRVAR</span>(__pyx_doc_22groupedpaneldatamodels_5utils_16bonhomme_manresa_grouped_fixed_effects, "\n    Run several random starts and return the best solution.\n    ");
+static PyMethodDef __pyx_mdef_22groupedpaneldatamodels_5utils_16bonhomme_manresa_1grouped_fixed_effects = {"grouped_fixed_effects", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_22groupedpaneldatamodels_5utils_16bonhomme_manresa_1grouped_fixed_effects, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_22groupedpaneldatamodels_5utils_16bonhomme_manresa_grouped_fixed_effects};
+static PyObject *__pyx_pw_22groupedpaneldatamodels_5utils_16bonhomme_manresa_1grouped_fixed_effects(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -2853,13 +2853,13 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       <span class='pyx_c_api'>__Pyx_Arg_XDECREF_FASTCALL</span>(values[__pyx_temp]);
     }
   }
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa.grouped_fixed_effects", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa.grouped_fixed_effects", __pyx_clineno, __pyx_lineno, __pyx_filename);
   <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!<span class='pyx_c_api'>__Pyx_ArgTypeTest</span>(((PyObject *)__pyx_v_y), __pyx_ptype_5numpy_ndarray, 1, "y", 0))) <span class='error_goto'>__PYX_ERR(0, 208, __pyx_L1_error)</span>
   if (unlikely(!<span class='pyx_c_api'>__Pyx_ArgTypeTest</span>(((PyObject *)__pyx_v_x), __pyx_ptype_5numpy_ndarray, 1, "x", 0))) <span class='error_goto'>__PYX_ERR(0, 209, __pyx_L1_error)</span>
-  __pyx_r = __pyx_pf_16bonhomme_manresa_grouped_fixed_effects(__pyx_self, __pyx_v_y, __pyx_v_x, __pyx_v_G, __pyx_v_max_iter, __pyx_v_tol, __pyx_v_gfe_iterations);
+  __pyx_r = __pyx_pf_22groupedpaneldatamodels_5utils_16bonhomme_manresa_grouped_fixed_effects(__pyx_self, __pyx_v_y, __pyx_v_x, __pyx_v_G, __pyx_v_max_iter, __pyx_v_tol, __pyx_v_gfe_iterations);
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -2879,7 +2879,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_16bonhomme_manresa_grouped_fixed_effects(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_x, int __pyx_v_G, int __pyx_v_max_iter, double __pyx_v_tol, int __pyx_v_gfe_iterations) {
+static PyObject *__pyx_pf_22groupedpaneldatamodels_5utils_16bonhomme_manresa_grouped_fixed_effects(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_y, PyArrayObject *__pyx_v_x, int __pyx_v_G, int __pyx_v_max_iter, double __pyx_v_tol, int __pyx_v_gfe_iterations) {
   int __pyx_v_N;
   int __pyx_v_K;
   PyArrayObject *__pyx_v_best_theta = 0;
@@ -2922,12 +2922,12 @@ static PyObject *__pyx_pf_16bonhomme_manresa_grouped_fixed_effects(CYTHON_UNUSED
   __pyx_pybuffernd_x.rcbuffer = &amp;__pyx_pybuffer_x;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 208, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_y, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 208, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_y.diminfo[0].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_y.diminfo[0].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_y.diminfo[1].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_y.diminfo[1].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_y.diminfo[2].strides = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_y.diminfo[2].shape = __pyx_pybuffernd_y.rcbuffer-&gt;pybuffer.shape[2];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_x, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 208, __pyx_L1_error)</span>
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_x, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) <span class='error_goto'>__PYX_ERR(0, 208, __pyx_L1_error)</span>
   }
   __pyx_pybuffernd_x.diminfo[0].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_x.diminfo[0].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_x.diminfo[1].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_x.diminfo[1].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[1]; __pyx_pybuffernd_x.diminfo[2].strides = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.strides[2]; __pyx_pybuffernd_x.diminfo[2].shape = __pyx_pybuffernd_x.rcbuffer-&gt;pybuffer.shape[2];
 /* … */
@@ -2948,7 +2948,7 @@ static PyObject *__pyx_pf_16bonhomme_manresa_grouped_fixed_effects(CYTHON_UNUSED
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_x.rcbuffer-&gt;pybuffer);
     <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_y.rcbuffer-&gt;pybuffer);
   <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
-  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("bonhomme_manresa.grouped_fixed_effects", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("groupedpaneldatamodels.utils.bonhomme_manresa.grouped_fixed_effects", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -2982,7 +2982,7 @@ static PyObject *__pyx_pf_16bonhomme_manresa_grouped_fixed_effects(CYTHON_UNUSED
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
   __pyx_t_4 = 0;
-  __pyx_t_4 = <span class='pyx_c_api'>__Pyx_CyFunction_New</span>(&amp;__pyx_mdef_16bonhomme_manresa_1grouped_fixed_effects, 0, __pyx_n_s_grouped_fixed_effects, NULL, __pyx_n_s_bonhomme_manresa, __pyx_d, ((PyObject *)__pyx_codeobj__12));<span class='error_goto'> if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 208, __pyx_L1_error)</span>
+  __pyx_t_4 = <span class='pyx_c_api'>__Pyx_CyFunction_New</span>(&amp;__pyx_mdef_22groupedpaneldatamodels_5utils_16bonhomme_manresa_1grouped_fixed_effects, 0, __pyx_n_s_grouped_fixed_effects, NULL, __pyx_n_s_groupedpaneldatamodels_utils_bon, __pyx_d, ((PyObject *)__pyx_codeobj__12));<span class='error_goto'> if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 208, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_4);
   <span class='pyx_c_api'>__Pyx_CyFunction_SetDefaultsTuple</span>(__pyx_t_4, __pyx_t_5);
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_5); __pyx_t_5 = 0;
@@ -3011,7 +3011,7 @@ static PyObject *__pyx_pf_16bonhomme_manresa_grouped_fixed_effects(CYTHON_UNUSED
 <pre class='cython code score-4 '>  __pyx_t_1 = ((PyArrayObject *)Py_None);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_1, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_1, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_best_theta = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 220, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_best_theta.diminfo[0].strides = __pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_best_theta.diminfo[0].shape = __pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_best_theta.diminfo[1].strides = __pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_best_theta.diminfo[1].shape = __pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer.shape[1];
@@ -3024,7 +3024,7 @@ static PyObject *__pyx_pf_16bonhomme_manresa_grouped_fixed_effects(CYTHON_UNUSED
 <pre class='cython code score-4 '>  __pyx_t_2 = ((PyArrayObject *)Py_None);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_2, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_2, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_best_alpha = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer.buf = NULL;
       <span class='error_goto'>__PYX_ERR(0, 221, __pyx_L1_error)</span>
     } else {__pyx_pybuffernd_best_alpha.diminfo[0].strides = __pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_best_alpha.diminfo[0].shape = __pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_best_alpha.diminfo[1].strides = __pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_best_alpha.diminfo[1].shape = __pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer.shape[1];
@@ -3058,7 +3058,7 @@ static PyObject *__pyx_pf_16bonhomme_manresa_grouped_fixed_effects(CYTHON_UNUSED
   for (__pyx_t_6 = 0; __pyx_t_6 &lt; __pyx_t_5; __pyx_t_6+=1) {
     __pyx_v__ = __pyx_t_6;
 </pre><pre class="cython line score-1" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">228</span>:         <span class="n">res_tup</span> <span class="o">=</span> <span class="n">_gfe_iteration</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span></pre>
-<pre class='cython code score-1 '>    __pyx_t_7 = __pyx_f_16bonhomme_manresa__gfe_iteration(((PyArrayObject *)__pyx_v_y), ((PyArrayObject *)__pyx_v_x), __pyx_v_G, __pyx_v_N, __pyx_v_K, __pyx_v_max_iter, __pyx_v_tol);<span class='error_goto'> if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 228, __pyx_L1_error)</span>
+<pre class='cython code score-1 '>    __pyx_t_7 = __pyx_f_22groupedpaneldatamodels_5utils_16bonhomme_manresa__gfe_iteration(((PyArrayObject *)__pyx_v_y), ((PyArrayObject *)__pyx_v_x), __pyx_v_G, __pyx_v_N, __pyx_v_K, __pyx_v_max_iter, __pyx_v_tol);<span class='error_goto'> if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 228, __pyx_L1_error)</span>
     <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_7);
     <span class='pyx_macro_api'>__Pyx_XDECREF_SET</span>(__pyx_v_res_tup, ((PyObject*)__pyx_t_7));
     __pyx_t_7 = 0;
@@ -3122,10 +3122,10 @@ static PyObject *__pyx_pf_16bonhomme_manresa_grouped_fixed_effects(CYTHON_UNUSED
       {
         __Pyx_BufFmt_StackElem __pyx_stack[1];
         <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer);
-        __pyx_t_15 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_1, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
+        __pyx_t_15 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_1, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
         if (unlikely(__pyx_t_15 &lt; 0)) {
           <span class='py_c_api'>PyErr_Fetch</span>(&amp;__pyx_t_16, &amp;__pyx_t_17, &amp;__pyx_t_18);
-          if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_best_theta, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+          if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_theta.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_best_theta, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
             Py_XDECREF(__pyx_t_16); Py_XDECREF(__pyx_t_17); Py_XDECREF(__pyx_t_18);
             <span class='pyx_c_api'>__Pyx_RaiseBufferFallbackError</span>();
           } else {
@@ -3143,10 +3143,10 @@ static PyObject *__pyx_pf_16bonhomme_manresa_grouped_fixed_effects(CYTHON_UNUSED
       {
         __Pyx_BufFmt_StackElem __pyx_stack[1];
         <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer);
-        __pyx_t_15 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_2, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
+        __pyx_t_15 = <span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_2, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack);
         if (unlikely(__pyx_t_15 &lt; 0)) {
           <span class='py_c_api'>PyErr_Fetch</span>(&amp;__pyx_t_18, &amp;__pyx_t_17, &amp;__pyx_t_16);
-          if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_best_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+          if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_best_alpha.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_v_best_alpha, &amp;__Pyx_TypeInfo_nn___pyx_t_22groupedpaneldatamodels_5utils_16bonhomme_manresa_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
             Py_XDECREF(__pyx_t_18); Py_XDECREF(__pyx_t_17); Py_XDECREF(__pyx_t_16);
             <span class='pyx_c_api'>__Pyx_RaiseBufferFallbackError</span>();
           } else {
