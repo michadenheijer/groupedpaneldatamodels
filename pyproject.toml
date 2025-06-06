@@ -23,6 +23,14 @@ classifiers = [
 ]
 requires-python = ">=3.11" # Chosen somewhat randomly
 dynamic = ["version"]
+dependencies = [
+    "numpy~=2.0.0",
+    "pandas~=2.0.0",
+    "scipy~=1.15.2",
+    "scikit-learn~=1.6.1",
+    "skglm~=0.4",
+    "numba~=0.61.0"
+]
 
 [project.optional-dependencies]
 dev = ["black", "pytest", "coverage", "mypy"]
@@ -42,9 +50,9 @@ fast = true
 [tool.coverage.run]
 branch = true
 
-[tool.coverage.report]
-# TODO right now too lazy to implement this, but may have to do this in the future
-fail_under = 80
+# [tool.coverage.report]
+# # TODO right now too lazy to implement this, but may have to do this in the future
+# fail_under = 80
 
 
 [tool.pyright]

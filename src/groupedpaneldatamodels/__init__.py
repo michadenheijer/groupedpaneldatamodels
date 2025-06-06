@@ -6,17 +6,18 @@
 Grouped Panel Data Models for Python. Extends statsmodels and linearmodels with some of the most commonly used
 Panel Data Models. Implements the following papers:
 
-- Random Effects:
-    - TBD
 - Fixed Effects:
     - Bonhomme and Manresa (2015)
-    - TBD
+    - Su, Shi and Phillips (2016)
 - Interactive Effetcs"
-    - TBD
+    - Ando and Bai (2016)
+    - Su and Ju (2019)
 
 Designed to work well with Numpy and Pandas.
 """
 # Import all the relevant classes and functions here
+from .model import GroupedFixedEffects, GroupedInteractiveFixedEffects
+
 
 __version__ = "0.0.1"
-__all__ = [] # Name them here
+__all__ = ["GroupedFixedEffects", "GroupedInteractiveFixedEffects"]  # Name them here
