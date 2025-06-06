@@ -1,0 +1,1 @@
+This folder contains notebooks which were used for the development of the package and contain the original code eventually implemented in the package.
