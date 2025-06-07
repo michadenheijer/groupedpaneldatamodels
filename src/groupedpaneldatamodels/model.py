@@ -315,6 +315,8 @@ class _GroupedPanelModelBase:  # type:ignore
             "params_standard_errors": self._params_standard_errors,
             "use_bootstrap": self._use_bootstrap,
             "bootstrap_estimations": self._bootstrap_estimations if hasattr(self, "_bootstrap_estimations") else None,
+            "se": self._params_standard_errors,
+            "conf_interval": self.get_confidence_intervals() if hasattr(self, "_params_standard_errors") else None,
             "N": self.N,
             "T": self.T,
             "K": self.K,

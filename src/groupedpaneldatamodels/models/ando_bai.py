@@ -365,7 +365,7 @@ def _reorder_groups(g, beta, F):
 
 
 def grouped_interactive_effects_hetrogeneous(
-    y, x, G, GF=None, kappa=0.0, gamma=3.7, tol=1e-6, gife_iterations=100, max_iterations=1000
+    y, x, G, GF=None, kappa=0.0, gamma=3.7, tol=1e-6, gife_iterations=100, max_iter=1000
 ):
     """Runs GIFE regression"""
     N, T, K = x.shape
@@ -384,7 +384,7 @@ def grouped_interactive_effects_hetrogeneous(
 
     for i in range(gife_iterations):
         beta, g, F, Lambda, objective_value = _grouped_interactive_effects_iteration_hetrogeneous(
-            y, x, G, GF, N, T, K, kappa, gamma, tol, max_iterations
+            y, x, G, GF, N, T, K, kappa, gamma, tol, max_iter
         )
 
         if objective_value < best_objective_value:

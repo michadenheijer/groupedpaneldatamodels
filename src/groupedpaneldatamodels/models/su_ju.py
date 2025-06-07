@@ -2,15 +2,51 @@ import numpy as np
 import scipy.optimize as opt
 
 from numpy.linalg import lstsq, eigh, eigvalsh
+from numba import njit
 from sklearn.cluster import KMeans
 
 
-def _objective_value_without_individual_effects(y, x, beta, alpha, kappa, N, R, T):
-    y = np.squeeze(y, axis=2)  # FIXME preferably this should be done outside
+@njit(fastmath=True)
+def _base(y, x, beta, N, T, R):
     res = (y - np.sum(x * beta.T[:, None, :], axis=2)).T
     v_res = (res @ res.T) / N
-    base = eigvalsh(v_res)[:-R].sum() / T
-    penalty = np.mean(np.prod(np.linalg.norm(beta[:, :, None] - alpha[:, None, :], axis=0), axis=1)) * kappa
+    return eigvalsh(v_res)[:-R].sum() / T
+
+
+@njit(fastmath=True)
+def _norm(beta, alpha):
+    alpha_norm2 = np.sum(alpha * alpha, axis=0)  # (n,)
+    beta_norm2 = np.sum(beta * beta, axis=0)  # (m,)
+
+    # all pairwise dot products
+    dot = beta.T @ alpha  # (m, n)
+
+    # expand to (m,1) and (1,n) for broadcasting
+    d2 = beta_norm2.reshape((-1, 1)) + alpha_norm2.reshape((1, -1)) - 2.0 * dot
+
+    # clamp tiny negatives from round-off
+    d2 = np.maximum(d2, 0.0)
+
+    return np.sqrt(d2)
+
+
+@njit(fastmath=True)
+def _row_prod(a):
+    """Row-wise product for 2-D array `a` – returns shape (a.shape[0],)."""
+    m, n = a.shape
+    out = np.empty(m, dtype=a.dtype)
+    for i in range(m):
+        p = 1.0
+        for j in range(n):
+            p *= a[i, j]
+        out[i] = p
+    return out
+
+
+@njit(fastmath=True)
+def _objective_value_without_individual_effects(y, x, beta, alpha, kappa, N, R, T):
+    base = _base(y, x, beta, N, T, R)
+    penalty = np.mean(_row_prod(_norm(beta, alpha))) * kappa
     return base + penalty
 
 
@@ -39,7 +75,8 @@ def order_alpha(alpha):
     return ordered_alpha
 
 
-def interactive_effects_estimation(y, x, N, T, K, G, R, max_iter=1000, only_bfgs=False, tol=1e-6, kappa=10):
+def interactive_effects_estimation(y, x, N, T, K, G, R, max_iter=1000, only_bfgs=True, tol=1e-6, kappa=0.1):
+    y = np.squeeze(y, axis=2)
     beta, alpha, _ = _generate_initial_estimates(y, x, N, T, K, G)
 
     alpha_prev = alpha.copy()
@@ -64,7 +101,11 @@ def interactive_effects_estimation(y, x, N, T, K, G, R, max_iter=1000, only_bfgs
 
             if i % 2 == 0 or only_bfgs:
                 minimizer = opt.minimize(
-                    obj_local, pack_local(beta, alpha), method="BFGS", options={"maxiter": 10}, tol=1e-6
+                    obj_local,
+                    pack_local(beta, alpha),
+                    method="L-BFGS-B",
+                    options={"maxiter": 100 if only_bfgs else 10},
+                    tol=1e-4,
                 )
                 beta, alpha = unpack_local(minimizer.x)
                 obj_value = minimizer.fun

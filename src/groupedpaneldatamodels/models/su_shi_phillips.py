@@ -1,19 +1,52 @@
 import numpy as np
 import scipy.optimize as opt
 
+from numba import njit
 from numpy.linalg import lstsq
 from sklearn.cluster import KMeans
 
 
+@njit(fastmath=True)
+def _norm(beta, alpha):
+    alpha_norm2 = np.sum(alpha * alpha, axis=0)  # (n,)
+    beta_norm2 = np.sum(beta * beta, axis=0)  # (m,)
+
+    # all pairwise dot products
+    dot = beta.T @ alpha  # (m, n)
+
+    # expand to (m,1) and (1,n) for broadcasting
+    d2 = beta_norm2.reshape((-1, 1)) + alpha_norm2.reshape((1, -1)) - 2.0 * dot
+
+    # clamp tiny negatives from round-off
+    d2 = np.maximum(d2, 0.0)
+
+    return np.sqrt(d2)
+
+
+@njit(fastmath=True)
+def _row_prod(a):
+    """Row-wise product for 2-D array `a` – returns shape (a.shape[0],)."""
+    m, n = a.shape
+    out = np.empty(m, dtype=a.dtype)
+    for i in range(m):
+        p = 1.0
+        for j in range(n):
+            p *= a[i, j]
+        out[i] = p
+    return out
+
+
+@njit(fastmath=True)
 def _objective_value(y, x, beta, alpha, mu, kappa):
     base = ((y - np.sum(x * beta.T[:, None, :], axis=2) - mu) ** 2).mean()
-    penalty = np.mean(np.prod(np.linalg.norm(beta[:, :, None] - alpha[:, None, :], axis=0), axis=1)) * kappa
+    penalty = np.mean(_row_prod(_norm(beta, alpha))) * kappa
     return base + penalty
 
 
+@njit(fastmath=True)
 def _objective_value_without_individual_effects(y, x, beta, alpha, kappa):
     base = ((y - np.sum(x * beta.T[:, None, :], axis=2)) ** 2).mean()
-    penalty = np.mean(np.prod(np.linalg.norm(beta[:, :, None] - alpha[:, None, :], axis=0), axis=1)) * kappa
+    penalty = np.mean(_row_prod(_norm(beta, alpha))) * kappa
     return base + penalty
 
 

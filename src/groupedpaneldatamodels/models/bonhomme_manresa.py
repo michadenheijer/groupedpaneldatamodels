@@ -292,7 +292,7 @@ def _compute_theta_hetrogeneous(x, y, alpha, g, G, K):
     return theta
 
 
-# # @njit
+# @njit
 def _compute_residuals_hetrogeneous(y, x, theta, G):
     """Computes the residuals based on y, x and theta"""
     res = np.tile(y, (1, G)) - x @ theta
