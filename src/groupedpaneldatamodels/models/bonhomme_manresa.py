@@ -4,6 +4,7 @@
 
 import numpy as np
 from numpy.linalg import lstsq
+from scipy.linalg import lstsq as lstsq_sp
 
 from numba import njit
 
@@ -53,7 +54,11 @@ def _compute_theta(x, y, alpha, g):
     """Computes the theta values based on the x, y, alpha and groupings"""
     # FIXME check if this makes sense
     K = x.shape[2]  # FIXME I believe that shape is slow in Cython
-    theta = lstsq(x.reshape(-1, K), y.reshape(-1, 1) - alpha[g].reshape(-1, 1), rcond=None)[0]
+    theta = lstsq_sp(
+        x.reshape(-1, K), y.reshape(-1, 1) - alpha[g].reshape(-1, 1), lapack_driver="gelsy"
+    )[  # type:ignore
+        0
+    ]
     return theta
 
 
@@ -260,11 +265,17 @@ def _get_starting_values_hetrogeneous(y, x, G: int, N: int, K: int):
 
 
 # @njit
+# def _compute_groupings_hetrogeneous(res, alpha):
+#     """Computes the groupings based on the residuals and alpha"""
+#     euclidean_distance_between_grouping = np.squeeze((res - alpha.T[None, :, :]) ** 2).sum(axis=1)
+#     g = np.argmin(euclidean_distance_between_grouping, axis=1)  # Closest group
+#     return g
+
+
 def _compute_groupings_hetrogeneous(res, alpha):
-    """Computes the groupings based on the residuals and alpha"""
-    euclidean_distance_between_grouping = np.squeeze((res - alpha.T[None, :, :]) ** 2).sum(axis=1)
-    g = np.argmin(euclidean_distance_between_grouping, axis=1)  # Closest group
-    return g
+    """Assign each unit to the nearest group (least-squares sense)."""
+    dists = np.square(res - alpha.T[None, :, :]).sum(axis=1)  # (N, G)
+    return np.argmin(dists, axis=1).astype(np.int8)
 
 
 # # @njit
@@ -285,8 +296,10 @@ def _compute_theta_hetrogeneous(x, y, alpha, g, G, K):
     # FIXME check if this makes sense
     theta = np.zeros((K, G))
     for i in range(G):
-        theta[:, i] = lstsq(
-            x[g == i].reshape(-1, K), np.squeeze((np.squeeze(y[g == i]) - alpha[i]).reshape(-1, 1)), rcond=None
+        theta[:, i] = lstsq_sp(  # type:ignore
+            x[g == i].reshape(-1, K),
+            np.squeeze((np.squeeze(y[g == i]) - alpha[i]).reshape(-1, 1)),
+            lapack_driver="gelsy",
         )[0]
 
     return theta

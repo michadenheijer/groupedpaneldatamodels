@@ -19,7 +19,7 @@ from .models.su_shi_phillips import fixed_effects_estimation as su_shi_phillips
 
 # Second standard library imports
 from typing import Literal, Any
-from copy import deepcopy
+from copy import deepcopy, copy
 from datetime import datetime
 from time import process_time
 
@@ -55,7 +55,7 @@ class _GroupedPanelModelBase:  # type:ignore
         Whether to check the rank of the model, default is True, skipping may improve performance.
     """
 
-    def __init__(self, dependent: ArrayLike, exog: ArrayLike, use_bootstrap: bool = False):
+    def __init__(self, dependent: ArrayLike, exog: ArrayLike, use_bootstrap: bool = False, **kwargs):
         # TODO Voor nu alles omzetten naar een array, maar weet niet hoe handig dat altijd is
         # want je verliest wel de namen van de kolommen, misschien net als linearmodels een
         # aparte class hiervoor maken
@@ -77,6 +77,7 @@ class _GroupedPanelModelBase:  # type:ignore
         self._params = None
         self._IC = None
         self._params_standard_errors = None
+        self._hide_progressbar = kwargs.pop("hide_progressbar", False)
 
         # TODO implement self._not_null (only if neccesary)
         self._validate_data()  # TODO implement this function
@@ -207,7 +208,9 @@ class _GroupedPanelModelBase:  # type:ignore
         # TODO implement this function
         raise NotImplementedError("Fit function not implemented yet")
 
-    def _get_bootstrap_confidence_intervals(self, params: tuple[str], n_boot: int = 50, **kwargs):
+    def _get_bootstrap_confidence_intervals(
+        self, params: tuple[str], n_boot: int = 50, require_deepcopy=False, **kwargs
+    ):
         """
         Computes bootstrap confidence intervals for the parameters
 
@@ -227,13 +230,13 @@ class _GroupedPanelModelBase:  # type:ignore
 
         # FIXME this is possibly the worst method to implement this, but I guess this is it
         estimations = []
+        c = deepcopy(self) if require_deepcopy else copy(self)
+        c._use_bootstrap = False  # Disable bootstrap for the copied model)
 
-        for i in trange(n_boot):
-            c = deepcopy(self)
-            c._use_bootstrap = False  # Disable bootstrap for the copied model
+        for i in trange(n_boot, disable=self._hide_progressbar, desc=f"Bootstrap {self._name}@{hex(id(self))}"):
             sample = np.random.choice(self.N, replace=True, size=self.N)
-            c.dependent = c.dependent[sample, :, :]
-            c.exog = c.exog[sample, :, :]
+            c.dependent = self.dependent[sample, :, :]
+            c.exog = self.exog[sample, :, :]
             estimations.append(c.fit(**kwargs).params)
 
         self._bootstrap_estimations = estimations
@@ -333,8 +336,9 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         model: Literal["bonhomme_manresa", "su_shi_phillips"] = "bonhomme_manresa",
         heterogeneous_beta: bool = True,
         entity_effects: bool = False,
+        **kwargs,
     ):
-        super().__init__(dependent, exog, use_bootstrap)
+        super().__init__(dependent, exog, use_bootstrap, **kwargs)
 
         self._entity_effects = entity_effects
 
@@ -410,8 +414,9 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
         GF: ArrayLike | None = None,
         R: int | None = None,
         heterogeneous_beta: bool = True,
+        **kwargs,
     ):
-        super().__init__(dependent, exog, use_bootstrap)
+        super().__init__(dependent, exog, use_bootstrap, **kwargs)
 
         self._model_type = model
 
