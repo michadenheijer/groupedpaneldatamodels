@@ -14,6 +14,75 @@ import warnings
 warnings.simplefilter(action="ignore", category=RuntimeWarning)
 
 
+from numba import njit
+import numpy as np
+
+
+import numpy as np
+from numba import njit
+
+
+import numpy as np
+from numba import njit
+
+
+import numpy as np
+from numba import njit
+
+
+import numpy as np
+from numba import njit
+
+
+@njit
+def fast_qr_f32(A, b, tol):
+    """
+    Float-32 QR least-squares with empty-matrix guard.
+
+    Always returns a 2-D array (n, k) so Numba sees a single return type.
+    """
+    # Promote to float32 and make RHS 2-D -------------------------------
+    A32 = A.astype(np.float32)
+    b32 = b.astype(np.float32).reshape(-1, 1) if b.ndim == 1 else b.astype(np.float32)
+
+    m, n = A32.shape
+    k = b32.shape[1]  # number of RHS
+
+    # --------- EARLY EXIT for empty design or empty sample -------------
+    if m == 0 or n == 0:
+        return np.zeros((n, k), dtype=np.float32), False
+
+    # ----------------------- QR factorisation --------------------------
+    Q, R = np.linalg.qr(A32)
+
+    # Cheap full-rank test ---------------------------------------------
+    rdiag_ok = True
+    rcond = tol
+    rmin = n if m >= n else m
+    for i in range(rmin):
+        if abs(R[i, i]) <= rcond:
+            rdiag_ok = False
+            break
+
+    if rdiag_ok:  # fast path
+        X = np.linalg.solve(R, np.ascontiguousarray(Q.T) @ np.ascontiguousarray(b32))  # (n, k)
+        return X, True
+
+    # fallback signal – same array shape/type ---------------------------
+    return np.empty((n, k), dtype=np.float32), False
+
+
+# NOTE disable superfast_lstsq for now, as it is untested
+def superfast_lstsq(A, b, tol=1e-5):
+    # X, ok = fast_qr_f32(A, b, tol)
+    # if ok:  # QR succeeded
+    #     return X.ravel() if b.ndim == 1 else X
+
+    # robust fallback (also works for empty A)
+    Xf, *_ = np.linalg.lstsq(A.astype(np.float32), b.astype(np.float32), rcond=-1)
+    return Xf
+
+
 # @njit
 def _get_starting_values(y, x, G: int, N: int, K: int):
     """Generates the starting values of theta"""
@@ -54,11 +123,15 @@ def _compute_theta(x, y, alpha, g):
     """Computes the theta values based on the x, y, alpha and groupings"""
     # FIXME check if this makes sense
     K = x.shape[2]  # FIXME I believe that shape is slow in Cython
-    theta = lstsq_sp(
-        x.reshape(-1, K), y.reshape(-1, 1) - alpha[g].reshape(-1, 1), lapack_driver="gelsy"
-    )[  # type:ignore
-        0
-    ]
+    # theta = lstsq_sp(
+    #     x.reshape(-1, K), y.reshape(-1, 1) - alpha[g].reshape(-1, 1), lapack_driver="gelsy"
+    # )[  # type:ignore
+    #     0
+    # ]
+    theta = superfast_lstsq(
+        x.reshape(-1, K),
+        y.reshape(-1, 1) - alpha[g].reshape(-1, 1),
+    )
     return theta
 
 
@@ -110,8 +183,9 @@ def _grouped_fixed_effects_iteration(y, x, G: int, N: int, K: int, max_iter=1000
             break
 
         objective_value = new_objective_value
+    resid = _compute_residuals(y, x, theta)[np.arange(N), :, g] - alpha[g]
 
-    return theta, alpha, g, iterations_used, objective_value
+    return theta, alpha, g, iterations_used, objective_value, resid
 
 
 def _compute_eta(y_bar, x_bar, theta):
@@ -223,14 +297,15 @@ def _grouped_fixed_effects_iteration_vns(y, x, G: int, N: int, K: int, max_iter=
         # TODO run VNS
         g, theta, alpha, new_objective_value = _run_vns(y, x, g, G, N, alpha, theta, new_objective_value)
 
-        # if abs(objective_value - new_objective_value) < tol:
-        #     iterations_used = i
-        #     objective_value = new_objective_value
-        #     break
+        if abs(objective_value - new_objective_value) < tol:
+            iterations_used = i
+            objective_value = new_objective_value
+            break
 
         objective_value = new_objective_value
+    resid = _compute_residuals(y, x, theta)[np.arange(N), :, g] - alpha[g]
 
-    return theta, alpha, g, max_iter, objective_value
+    return theta, alpha, g, max_iter, objective_value, resid
 
 
 # FIXME not used right now but still neccesary
@@ -275,7 +350,7 @@ def _get_starting_values_hetrogeneous(y, x, G: int, N: int, K: int):
 def _compute_groupings_hetrogeneous(res, alpha):
     """Assign each unit to the nearest group (least-squares sense)."""
     dists = np.square(res - alpha.T[None, :, :]).sum(axis=1)  # (N, G)
-    return np.argmin(dists, axis=1).astype(np.int8)
+    return np.argmin(dists, axis=1).astype(np.uint8)
 
 
 # # @njit
@@ -296,11 +371,15 @@ def _compute_theta_hetrogeneous(x, y, alpha, g, G, K):
     # FIXME check if this makes sense
     theta = np.zeros((K, G))
     for i in range(G):
-        theta[:, i] = lstsq_sp(  # type:ignore
+        # theta[:, i] = lstsq_sp(  # type:ignore
+        #     x[g == i].reshape(-1, K),
+        #     np.squeeze((np.squeeze(y[g == i]) - alpha[i]).reshape(-1, 1)),
+        #     lapack_driver="gelsy",
+        # )[0]
+        theta[:, i] = superfast_lstsq(  # type:ignore
             x[g == i].reshape(-1, K),
             np.squeeze((np.squeeze(y[g == i]) - alpha[i]).reshape(-1, 1)),
-            lapack_driver="gelsy",
-        )[0]
+        )
 
     return theta
 
@@ -423,6 +502,7 @@ def _run_vns_hetrogeneous(
     return g, theta, alpha, objective_value
 
 
+# FIXME no stopping condition set up
 def _grouped_fixed_effects_iteration_vns_hetrogeneous(
     y, x, G: int, N: int, K: int, max_iter=10000, tol=1e-8, neighbor_max=10
 ):
@@ -449,14 +529,10 @@ def _grouped_fixed_effects_iteration_vns_hetrogeneous(
             y, x, g, G, N, alpha, theta, new_objective_value, K
         )
 
-        # if abs(objective_value - new_objective_value) < tol:
-        #     iterations_used = i
-        #     objective_value = new_objective_value
-        #     break
-
         objective_value = new_objective_value
+    resid = _compute_residuals_hetrogeneous(y, x, theta, G)[np.arange(N), :, g] - alpha[g]
 
-    return theta, alpha, g, max_iter, objective_value
+    return theta, alpha, g, max_iter, objective_value, resid
 
 
 def _grouped_fixed_effects_iteration_hetrogeneous(y, x, G: int, N: int, K: int, max_iter=10000, tol=1e-8):
@@ -484,7 +560,9 @@ def _grouped_fixed_effects_iteration_hetrogeneous(y, x, G: int, N: int, K: int, 
         objective_value = new_objective_value
         iterations_used = i
 
-    return theta, alpha, g, iterations_used, objective_value
+    resid = _compute_residuals_hetrogeneous(y, x, theta, G)[np.arange(N), :, g] - alpha[g]
+
+    return theta, alpha, g, iterations_used, objective_value, resid
 
 
 def _compute_eta_hetrogeneous(y_bar, x_bar, theta):
@@ -517,6 +595,7 @@ def grouped_fixed_effects(
     best_g = None
     best_iterations_used = None
     best_objective_value = np.inf
+    best_resid = None
 
     N = x.shape[0]
     T = x.shape[1]
@@ -532,17 +611,19 @@ def grouped_fixed_effects(
     for _ in range(gfe_iterations):
         # FIXME should be better way to do this
         if hetrogeneous_theta and enable_vns:
-            theta, alpha, g, iterations_used, objective_value = _grouped_fixed_effects_iteration_vns_hetrogeneous(
-                y,
-                x,
-                G,
-                N,
-                K,
-                max_iter,
-                tol,
+            theta, alpha, g, iterations_used, objective_value, resid = (
+                _grouped_fixed_effects_iteration_vns_hetrogeneous(
+                    y,
+                    x,
+                    G,
+                    N,
+                    K,
+                    max_iter,
+                    tol,
+                )
             )
         elif enable_vns:
-            theta, alpha, g, iterations_used, objective_value = _grouped_fixed_effects_iteration_vns(
+            theta, alpha, g, iterations_used, objective_value, resid = _grouped_fixed_effects_iteration_vns(
                 y,
                 x,
                 G,
@@ -553,7 +634,7 @@ def grouped_fixed_effects(
             )
 
         elif hetrogeneous_theta:
-            theta, alpha, g, iterations_used, objective_value = _grouped_fixed_effects_iteration_hetrogeneous(
+            theta, alpha, g, iterations_used, objective_value, resid = _grouped_fixed_effects_iteration_hetrogeneous(
                 y,
                 x,
                 G,
@@ -564,7 +645,7 @@ def grouped_fixed_effects(
             )
 
         else:
-            theta, alpha, g, iterations_used, objective_value = _grouped_fixed_effects_iteration(
+            theta, alpha, g, iterations_used, objective_value, resid = _grouped_fixed_effects_iteration(
                 y, x, G, N, K, max_iter, tol
             )
 
@@ -573,12 +654,13 @@ def grouped_fixed_effects(
             best_g, best_alpha, best_theta = _reorder_groups_hetrogeneous(g, alpha, theta, hetrogeneous_theta)
             # best_g, best_alpha = g, alpha
             best_iterations_used = iterations_used
+            best_resid = resid.reshape(-1)  # NOTE always reshape to 1d array
 
     # FIXME this should not be true for hetrogeneous theta
     # Because does not work
     if unit_specific_effects:
         eta = _compute_eta_hetrogeneous(y_bar, x_bar, best_theta)
-        return best_theta, best_alpha, best_g, eta, best_iterations_used, best_objective_value
+        return best_theta, best_alpha, best_g, eta, best_iterations_used, best_objective_value, best_resid
 
     # NOTE None is for lack of unit specific effects
-    return best_theta, best_alpha, best_g, None, best_iterations_used, best_objective_value
+    return best_theta, best_alpha, best_g, None, best_iterations_used, best_objective_value, best_resid

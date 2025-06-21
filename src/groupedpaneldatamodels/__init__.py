@@ -17,7 +17,8 @@ Designed to work well with Numpy and Pandas.
 """
 # Import all the relevant classes and functions here
 from .model import GroupedFixedEffects, GroupedInteractiveFixedEffects
+from .information_criteria import grid_search_by_ic
 
 
 __version__ = "0.0.1"
-__all__ = ["GroupedFixedEffects", "GroupedInteractiveFixedEffects"]  # Name them here
+__all__ = ["GroupedFixedEffects", "GroupedInteractiveFixedEffects", "grid_search_by_ic"]  # Name them here

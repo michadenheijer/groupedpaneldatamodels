@@ -176,6 +176,19 @@ def _grouped_interactive_effects_iteration(y, x, G, GF, N, T, K, kappa, gamma, t
     return beta, g, F, Lambda, last_objective_value
 
 
+def _compute_resid(y, x, beta, g, F, Lambda, G, GF, N, T):
+    """Computes the residuals for the GIFE model"""
+    res = np.zeros((N, T, G))
+    for i in range(G):
+        res[:, :, i] = (
+            y.reshape(N, -1)
+            - x @ beta
+            - (F[:, GF[:i].sum() : GF[: i + 1].sum()] @ Lambda[GF[:i].sum() : GF[: i + 1].sum(), :]).T
+        )
+
+    return res[np.arange(N), :, g].reshape(N, T)
+
+
 def grouped_interactive_effects(
     y, x, G, GF=None, kappa=0.0, gamma=3.7, tol=1e-6, gife_iterations=100, max_iterations=1000
 ):
@@ -206,7 +219,9 @@ def grouped_interactive_effects(
             best_F = F
             best_Lambda = Lambda
 
-    return best_beta, best_g, best_F, best_Lambda, best_objective_value
+    resid = _compute_resid(y, x, best_beta, best_g, best_F, best_Lambda, G, GF, N, T)
+
+    return best_beta, best_g, best_F, best_Lambda, best_objective_value, resid
 
 
 ##### Heterogeneous Case ######
@@ -364,6 +379,19 @@ def _reorder_groups(g, beta, F):
     return ordered_g, ordered_beta, ordered_F
 
 
+def _compute_resid_hetrogeneous(y, x, beta, g, F, Lambda, G, GF, N, T):
+    """Computes the residuals for the GIFE model"""
+    res = np.zeros((N, T, G))
+    for i in range(G):
+        res[:, :, i] = (
+            y.reshape(N, -1)
+            - x @ beta[:, i]
+            - (F[:, GF[:i].sum() : GF[: i + 1].sum()] @ Lambda[GF[:i].sum() : GF[: i + 1].sum(), :]).T
+        )
+
+    return res[np.arange(N), :, g].reshape(N, T)
+
+
 def grouped_interactive_effects_hetrogeneous(
     y, x, G, GF=None, kappa=0.0, gamma=3.7, tol=1e-6, gife_iterations=100, max_iter=1000
 ):
@@ -394,6 +422,7 @@ def grouped_interactive_effects_hetrogeneous(
             best_F = F
             best_Lambda = Lambda
 
+    resid = _compute_resid_hetrogeneous(y, x, best_beta, best_g, best_F, best_Lambda, G, GF, N, T)
     ordered_g, ordered_beta, ordered_F = _reorder_groups(best_g, best_beta, best_F)
 
-    return ordered_beta, ordered_g, ordered_F, best_Lambda, best_objective_value
+    return ordered_beta, ordered_g, ordered_F, best_Lambda, best_objective_value, resid

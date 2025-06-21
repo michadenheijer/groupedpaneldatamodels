@@ -75,6 +75,10 @@ def order_alpha(alpha):
     return ordered_alpha
 
 
+def _compute_resid(y, x, beta, factors, lambdas, N, T):
+    return y - np.sum(x * beta.T[:, None, :], axis=2) - (factors @ lambdas).T
+
+
 def interactive_effects_estimation(y, x, N, T, K, G, R, max_iter=1000, only_bfgs=True, tol=1e-6, kappa=0.1):
     y = np.squeeze(y, axis=2)
     beta, alpha, _ = _generate_initial_estimates(y, x, N, T, K, G)
@@ -142,4 +146,6 @@ def interactive_effects_estimation(y, x, N, T, K, G, R, max_iter=1000, only_bfgs
     for i in range(R):
         lambdas[i, :] = factors[:, i].T @ res
 
-    return beta, order_alpha(alpha), lambdas, factors
+    resid = _compute_resid(y, x, beta, factors, lambdas, N, T)
+
+    return beta, order_alpha(alpha), lambdas, factors, resid

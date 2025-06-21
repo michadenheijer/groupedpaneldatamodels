@@ -15,7 +15,7 @@ from .models.bonhomme_manresa import (
 )
 from .models.su_ju import interactive_effects_estimation as su_ju
 from .models.su_shi_phillips import fixed_effects_estimation as su_shi_phillips
-
+from .information_criteria import compute_statistics
 
 # Second standard library imports
 from typing import Literal, Any
@@ -24,7 +24,10 @@ from datetime import datetime
 from time import process_time
 
 # Third party imports
+from statsmodels.iolib.summary import Summary
+from statsmodels.iolib.table import SimpleTable
 from numpy.typing import ArrayLike
+from numpy.random import default_rng, SeedSequence
 from scipy.stats import norm
 from tqdm import trange
 
@@ -36,6 +39,8 @@ import numpy as np
 
 # Errors
 # TBD
+
+# NOTE pass RNG to the models
 
 
 # Base Class
@@ -55,7 +60,14 @@ class _GroupedPanelModelBase:  # type:ignore
         Whether to check the rank of the model, default is True, skipping may improve performance.
     """
 
-    def __init__(self, dependent: ArrayLike, exog: ArrayLike, use_bootstrap: bool = False, **kwargs):
+    def __init__(
+        self,
+        dependent: ArrayLike,
+        exog: ArrayLike,
+        use_bootstrap: bool = False,
+        random_state=None,
+        **kwargs,
+    ):
         # TODO Voor nu alles omzetten naar een array, maar weet niet hoe handig dat altijd is
         # want je verliest wel de namen van de kolommen, misschien net als linearmodels een
         # aparte class hiervoor maken
@@ -65,6 +77,9 @@ class _GroupedPanelModelBase:  # type:ignore
         self.exog = np.asarray(exog)
         self._N, self._T, self._K = self.exog.shape  # type:ignore
         self._constant = False  # Set to False and update when neccesary # FIXME not used
+        # Parallel‑safe random number generator
+        self._rng = default_rng(random_state)
+        self._random_state = random_state
 
         # Set up relevant information that needs to be stored
         self._use_bootstrap = use_bootstrap
@@ -78,6 +93,7 @@ class _GroupedPanelModelBase:  # type:ignore
         self._IC = None
         self._params_standard_errors = None
         self._hide_progressbar = kwargs.pop("hide_progressbar", False)
+        self._resid = None  # Residuals of the model, to be computed after fitting
 
         # TODO implement self._not_null (only if neccesary)
         self._validate_data()  # TODO implement this function
@@ -85,7 +101,7 @@ class _GroupedPanelModelBase:  # type:ignore
         # TODO implement cov_estimators
 
     def __str__(self) -> str:
-        return f"{self._name} \nShape exog: {self.exog.shape}\nShape dependent: {self.dependent.shape}\n"
+        return f"{self._name} ({self._model_type}) \nShape exog: {self.exog.shape}\nShape dependent: {self.dependent.shape}\n"
 
     def __repr__(self) -> str:
         return self.__str__() + f"\nid: {hex(id(self))}"
@@ -171,6 +187,34 @@ class _GroupedPanelModelBase:  # type:ignore
         return self._params_standard_errors
 
     @property
+    def t_values(self) -> dict:
+        """
+        Returns the t-values of the parameters
+
+        Returns
+        -------
+        dict | None
+            The t-values of the parameters, or None if not available
+        """
+        if self._params_standard_errors is None:
+            raise ValueError("Model has not been fitted yet or no bootstrap was used")
+        return {param: self.params[param] / se for param, se in self._params_standard_errors.items()}
+
+    def p_values(self) -> dict:
+        """
+        Returns the p-values of the parameters
+
+        Returns
+        -------
+        dict | None
+            The p-values of the parameters, or None if not available
+        """
+        if self._params_standard_errors is None:
+            raise ValueError("Model has not been fitted yet or no bootstrap was used")
+        t_values = self.t_values
+        return {param: 2 * (1 - norm.cdf(np.abs(t))) for param, t in t_values.items()}
+
+    @property
     def IC(self) -> dict:
         """
         Returns the information criteria of the model
@@ -196,7 +240,7 @@ class _GroupedPanelModelBase:  # type:ignore
         assert self._fit_start is not None, "Fit start time is not set. Did you call _pre_fit()?"
         self._fit_duration = process_time() - self._fit_start  # Calculate the time taken to fit the model
 
-    def fit(self):
+    def fit(self) -> "_GroupedPanelModelBase":
         """
         Fits the model to the data
 
@@ -230,11 +274,16 @@ class _GroupedPanelModelBase:  # type:ignore
 
         # FIXME this is possibly the worst method to implement this, but I guess this is it
         estimations = []
+        # Create child RNGs so each bootstrap draw has an independent stream.
+        seed_seq = SeedSequence(self._random_state)
+        child_seqs = seed_seq.spawn(n_boot)
+        rngs = [default_rng(s) for s in child_seqs]
         c = deepcopy(self) if require_deepcopy else copy(self)
         c._use_bootstrap = False  # Disable bootstrap for the copied model)
 
         for i in trange(n_boot, disable=self._hide_progressbar, desc=f"Bootstrap {self._name}@{hex(id(self))}"):
-            sample = np.random.choice(self.N, replace=True, size=self.N)
+            sample = rngs[i].choice(self.N, replace=True, size=self.N)
+            c._rng = rngs[i]  # ensure the copied model inherits its own generator
             c.dependent = self.dependent[sample, :, :]
             c.exog = self.exog[sample, :, :]
             estimations.append(c.fit(**kwargs).params)
@@ -315,15 +364,152 @@ class _GroupedPanelModelBase:  # type:ignore
             "model_type": self._model_type,
             "params": self._params,
             "IC": self._IC,
-            "params_standard_errors": self._params_standard_errors,
             "use_bootstrap": self._use_bootstrap,
             "bootstrap_estimations": self._bootstrap_estimations if hasattr(self, "_bootstrap_estimations") else None,
-            "se": self._params_standard_errors,
-            "conf_interval": self.get_confidence_intervals() if hasattr(self, "_params_standard_errors") else None,
+            "bootstrap_se": self._params_standard_errors if hasattr(self, "_params_standard_errors") else None,
+            "bootstrap_conf_interval": (
+                self.get_confidence_intervals() if hasattr(self, "_params_standard_errors") else None
+            ),
             "N": self.N,
             "T": self.T,
             "K": self.K,
         }
+
+    @staticmethod
+    def _show_float(value: float, precision: int = 4) -> str:
+        try:
+            return f"{value:.{precision}f}" if not np.isnan(value) else "N/A"
+        except Exception:
+            return str(value)
+
+    def summary(
+        self,
+        confidence_level: float = 0.95,
+    ):
+        # Ensure the model has been fitted
+        if self._params is None:
+            raise ValueError("Model has not been fitted yet")
+
+        # INFORMATION HEADERS
+        left = [
+            ["Type", f"{self._model_type}"],
+            ["Observations", self.N * self.T],
+            ["Exogenous Variables", self.K],
+            ["Groups", self.G if hasattr(self, "G") else "N/A"],  # type:ignore
+            ["Fit Time", self._fit_datetime],
+            ["Fit Duration", f"{self._fit_duration:.2f} seconds"],
+            [
+                "Hetrogeneous Beta",
+                self.heterogeneous_beta if hasattr(self, "heterogeneous_beta") else "N/A",  # type:ignore
+            ],
+        ]
+
+        ic = self._IC if self._IC is not None else {}
+
+        right = [
+            ["AIC", ic.get("AIC", "N/A")],
+            ["BIC", ic.get("BIC", "N/A")],
+            ["HQIC", ic.get("HQIC", "N/A")],
+            ["sigma^2", ic.get("sigma^2", "N/A")],
+            ["Seed", self._random_state if self._random_state is not None else "N/A"],
+            ["Use Bootstrap", self._use_bootstrap],
+            ["Confidence Level", confidence_level],
+        ]
+
+        top = [left + right for left, right in zip(left, right)]
+        headers_top = ["Left", "Value", "Right", "Value"]
+
+        summary = Summary()
+
+        summary.tables.append(SimpleTable(top, title=f"{self._name} Summary"))
+
+        # Coef.	Std.Err.	t	P>|t|	[0.025	0.975]
+        headers_params = [
+            "Parameter",
+            "Coef.",
+            "Std.Err.",
+            "t",
+            "P>|t|",
+            f"[{(1 - confidence_level)/2:.3f}",
+            f"{(1 - (1 - confidence_level)/2):.3f}]",
+        ]
+        params_values = []
+        # PARAMETERS TABLE
+
+        if self._params_standard_errors is not None:
+            prev_first_idx = None  # Tracks the first index of the previous parameter entry
+
+            for param in self.params_standard_errors.keys():
+                for idx, v in np.ndenumerate(self.params[param]):
+                    se = self.params_standard_errors[param][idx]
+                    t_value = self.t_values[param][idx]
+                    p_value = self.p_values()[param][idx]
+                    ci_lower = self.get_confidence_intervals(confidence_level)[param][0][idx]
+                    ci_upper = self.get_confidence_intervals(confidence_level)[param][1][idx]
+
+                    # Insert empty row if first index changes
+                    first_idx = idx[0] if len(idx) > 0 else None
+                    if prev_first_idx is not None and first_idx != prev_first_idx:
+                        params_values.append([""] * len(headers_params))
+
+                    prev_first_idx = first_idx
+
+                    # Format row
+                    row = [
+                        param + str(idx).replace("(", "").replace(")", "").replace(" ", ""),
+                        self._show_float(v),
+                        self._show_float(se),
+                        self._show_float(t_value),
+                        self._show_float(p_value),
+                        self._show_float(ci_lower),
+                        self._show_float(ci_upper),
+                    ]
+                    params_values.append(row)
+
+                params_se_table = SimpleTable(
+                    params_values,
+                    headers=headers_params,
+                    title=f"{param}",
+                )
+                summary.tables.append(params_se_table)
+
+        for param in self.params.keys():
+            if self._params_standard_errors is not None and param in self._params_standard_errors.keys():
+                continue
+
+            if self.params[param] is None:
+                continue
+
+            if isinstance(self.params[param], dict):
+                table = SimpleTable(
+                    [[a, b] for a, b in self.params[param].items()], title=f"{param} coef.", headers=["Index", "Value"]
+                )
+                summary.tables.append(table)
+
+            elif self.params[param].ndim == 1:
+                data = self.params[param].round(4)
+                table_data = [["Value"] + data.tolist()]
+                headers = ["Index"] + [f"{i}" for i in range(len(data))]
+                table = SimpleTable(
+                    table_data,
+                    title=f"{param} coef.",
+                    headers=headers,
+                )
+                summary.tables.append(table)
+            else:
+                data = self.params[param].round(4).T
+                index_column = [[f"{i}"] for i in range(data.shape[0])]
+                table_data = [row + value for row, value in zip(index_column, data.tolist())]
+                table = SimpleTable(
+                    table_data,
+                    title=f"{param} coef.",
+                    headers=[f"{param}"] + [f"{i}" for i in range(data.shape[0])],
+                )
+                # If no standard errors are available, just show the parameter values
+                summary.tables.append(table)
+                # break  # Only show the first parameter if no standard errors are available
+
+        return summary
 
 
 class GroupedFixedEffects(_GroupedPanelModelBase):
@@ -362,7 +548,7 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         n_boot = kwargs.pop("n_boot", 50)
         if self._model_type == "bonhomme_manresa":
             # TODO implement this function
-            beta, alpha, g, eta, iterations, objective_value = bonhomme_manresa(
+            b, beta, g, eta, iterations, objective_value, resid = bonhomme_manresa(
                 self.dependent,
                 self.exog,
                 self.G,
@@ -370,10 +556,15 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
                 unit_specific_effects=self._entity_effects,
                 **kwargs,
             )
-            self._params = {"beta": beta, "alpha": alpha, "g": g, "eta": eta}
-            sigma_squared, BIC = bm_compute_statistics(objective_value, self.N, self.T, self.K, self.G)
-            self._params.update({"sigma^2": sigma_squared})
-            self._IC = {"BIC": BIC}
+
+            # Create dictionary mapping group number to list of individuals
+            g_members = {int(group): np.where(g == group)[0].tolist() for group in np.unique(g)}
+
+            self._params = {"beta": b.T, "alpha": beta, "g": g_members, "eta": eta}
+            self._resid = resid  # Store the residuals
+            # TODO implement correct number of parameters
+            num_params = self.G * self.T + self.N + self.K
+            self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
             self._get_bootstrap_confidence_intervals(("beta",), n_boot=n_boot, **kwargs)
 
             self._post_fit()  # Set the fit duration and datetime
@@ -382,7 +573,7 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
             if self.heterogeneous_beta is False:
                 raise ValueError("Homogeneous beta is not supported for the Su and Shi Phillips model")
 
-            beta, mu, alpha = su_shi_phillips(
+            b, alpha, beta, resid = su_shi_phillips(
                 np.squeeze(self.dependent),
                 self.exog,
                 self.N,
@@ -393,9 +584,12 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
                 **kwargs,
             )
 
-            self._params = {"beta": beta, "mu": mu, "alpha": alpha}
-            self._IC = None  # TODO implement this
-            self._get_bootstrap_confidence_intervals(("alpha",), n_boot=n_boot, **kwargs)
+            self._params = {"beta": beta, "b": b, "alpha": alpha}
+            self._resid = resid  # Store the residuals
+            num_params = np.unique_counts(np.round(np.concat([b.ravel(), beta.ravel(), alpha.ravel()]), 3)).counts.sum()
+            # num_params = 0
+            self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
+            self._get_bootstrap_confidence_intervals(("beta",), n_boot=n_boot, **kwargs)
 
             self._post_fit()  # Set the fit duration and datetime
             return self
@@ -442,23 +636,27 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
         """
         self._pre_fit()
         n_boot = kwargs.pop("n_boot", 50)
+        assert self.GF is not None, "GF must be defined for the model"
+        assert isinstance(self.GF, np.ndarray), "GF must be a numpy array"
         if self._model_type == "ando_bai":
             if self.heterogeneous_beta:
                 # Use the heterogeneous version of the Ando and Bai model
-                beta, g, F, Lambda, objective_value = ando_bai_heterogeneous(
+                beta, g, F, Lambda, objective_value, resid = ando_bai_heterogeneous(
                     self.dependent, self.exog, self.G, self.GF, **kwargs
                 )
             else:
                 # Use the standard Ando and Bai model
-                beta, g, F, Lambda, objective_value = ando_bai(self.dependent, self.exog, self.G, self.GF, **kwargs)
+                beta, g, F, Lambda, objective_value, resid = ando_bai(
+                    self.dependent, self.exog, self.G, self.GF, **kwargs
+                )
 
-            self._params = {"beta": beta, "g": g, "F": F, "Lambda": Lambda}
+            # Create dictionary mapping group number to list of individuals
+            g_members = {int(group): np.where(g == group)[0].tolist() for group in np.unique(g)}
+            self._params = {"beta": beta.T, "g": g_members, "F": F, "Lambda": Lambda}
 
-            sigma_squared, BIC = bm_compute_statistics(
-                objective_value, self.N, self.T, self.K, self.G
-            )  # TODO this needs to be updated
-            self._params.update({"sigma^2": sigma_squared})  # TODO this as well
-            self._IC = {"BIC": BIC}
+            num_params = self.G * self.T + self.GF.sum() + self.N + self.K
+            self._resid = resid  # Store the residuals
+            self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
             self._get_bootstrap_confidence_intervals(
                 ("beta",), n_boot=n_boot, **kwargs  # type:ignore
             )
@@ -470,12 +668,15 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
             if self.heterogeneous_beta == False:
                 raise ValueError("Homogeneous beta is not supported for the Su and Ju model")
 
-            beta, alpha, lambdas, factors = su_ju(
+            b, beta, lambdas, factors, resid = su_ju(
                 self.dependent, self.exog, self.N, self.T, self.K, self.G, R=self.R, **kwargs
             )
-            self._params = {"beta": beta, "alpha": alpha, "lambdas": lambdas, "factors": factors}
-            self._IC = None  # TODO implement this
-            self._get_bootstrap_confidence_intervals(("alpha",), n_boot=n_boot, **kwargs)
+
+            self._params = {"b": b, "beta": beta, "lambdas": lambdas, "factors": factors}
+            self._resid = resid
+            num_params = np.unique_counts(np.concat([b.ravel(), beta.ravel(), lambdas.ravel()])).counts.sum()
+            self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
+            self._get_bootstrap_confidence_intervals(("beta",), n_boot=n_boot, **kwargs)
 
             self._post_fit()  # Set the fit duration and datetime
             return self

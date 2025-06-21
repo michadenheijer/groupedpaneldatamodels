@@ -75,9 +75,37 @@ def order_alpha(alpha):
     return ordered_alpha
 
 
+def _compute_resid(y, x, beta, mu):
+    """
+    Compute the residuals of the model.
+
+    Parameters:
+    y (np.ndarray): The dependent variable.
+    x (np.ndarray): The independent variables.
+    beta (np.ndarray): The coefficients for the independent variables.
+    mu (np.ndarray): The individual effects.
+
+    Returns:
+    np.ndarray: The residuals of the model.
+    """
+    return y - np.sum(x * beta.T[:, None, :], axis=2) - mu
+
+
 def fixed_effects_estimation(
-    y, x, N, T, K, G, max_iter=1000, only_bfgs=True, tol=1e-6, use_individual_effects=True, kappa=10
+    y, x, N, T, K, G, max_iter=1000, only_bfgs=True, tol=1e-6, use_individual_effects=True, kappa=0.1
 ):
+    # FIXME this works, though the code is not very clean
+    if use_individual_effects:
+        y_demeaned = y - np.mean(y, axis=1, keepdims=True)
+        x_demeaned = x - np.mean(x, axis=1, keepdims=True)
+
+        beta, mu, alpha, resid = fixed_effects_estimation(
+            y_demeaned, x_demeaned, N, T, K, G, max_iter, only_bfgs, tol, False, kappa
+        )
+
+        mu = np.mean(y - np.sum(x * beta.T[:, None, :], axis=2), axis=1, keepdims=True)
+        return beta, mu, order_alpha(alpha), resid
+
     beta, alpha, mu = _generate_initial_estimates(y, x, N, T, K, G)
 
     obj_value = np.inf
@@ -121,7 +149,7 @@ def fixed_effects_estimation(
                     pack_local(beta, mu, alpha),
                     method="L-BFGS-B",  #  FIXME BFGS may be better, but slower
                     options={"maxiter": 100 if only_bfgs else 10},
-                    tol=1e-4,
+                    tol=tol,
                 )
                 beta, mu, alpha = unpack_local(minimizer.x)
                 obj_value = minimizer.fun
@@ -132,7 +160,7 @@ def fixed_effects_estimation(
                     pack_local(beta, mu, alpha),
                     method="Nelder-Mead",
                     options={"adaptive": True, "maxiter": 100},
-                    tol=1e-4,
+                    tol=tol,
                 )
                 beta, mu, alpha = unpack_local(minimizer.x)
                 obj_value = minimizer.fun
@@ -147,7 +175,10 @@ def fixed_effects_estimation(
         last_obj_value = obj_value
 
     if use_individual_effects:
-        return beta, mu, order_alpha(alpha)
+        resid = _compute_resid(y, x, beta, mu)
+        assert mu is not None, "Mu should not be None when use_individual_effects is True"
+        return beta, mu, order_alpha(alpha), resid
     else:
         mu = np.zeros((N, 1))
-        return beta, mu, order_alpha(alpha)
+        resid = _compute_resid(y, x, beta, mu)
+        return beta, mu, order_alpha(alpha), resid
