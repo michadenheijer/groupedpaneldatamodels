@@ -91,7 +91,8 @@ class _GroupedPanelModelBase:  # type:ignore
         self._model_type = None  # Type of model, can be used for identification
         self._params = None
         self._IC = None
-        self._params_standard_errors = None
+        self._params_analytical_se = None
+        self._params_bootstrap_se = None
         self._hide_progressbar = kwargs.pop("hide_progressbar", False)
         self._resid = None  # Residuals of the model, to be computed after fitting
 
@@ -173,6 +174,34 @@ class _GroupedPanelModelBase:  # type:ignore
         return self._params
 
     @property
+    def params_bootstrap_standard_errors(self) -> dict:
+        """
+        Returns the bootstrap standard errors of the parameters
+
+        Returns
+        -------
+        dict | None
+            The bootstrap standard errors of the parameters, or None if not available
+        """
+        if self._params_bootstrap_se is None:
+            raise ValueError("Model has not been fitted yet or no bootstrap was used")
+        return self._params_bootstrap_se
+
+    @property
+    def params_analytical_standard_errors(self) -> dict:
+        """
+        Returns the analytical standard errors of the parameters
+
+        Returns
+        -------
+        dict | None
+            The analytical standard errors of the parameters, or None if not available
+        """
+        if self._params_analytical_se is None:
+            raise ValueError("Model has not been fitted yet or no bootstrap was used")
+        return self._params_analytical_se
+
+    @property
     def params_standard_errors(self) -> dict:
         """
         Returns the standard errors of the parameters
@@ -182,9 +211,10 @@ class _GroupedPanelModelBase:  # type:ignore
         dict | None
             The standard errors of the parameters, or None if not available
         """
-        if self._params_standard_errors is None:
-            raise ValueError("Model has not been fitted yet or no bootstrap was used")
-        return self._params_standard_errors
+        if not self._use_bootstrap:
+            return self.params_analytical_standard_errors
+
+        return self.params_bootstrap_standard_errors
 
     @property
     def t_values(self) -> dict:
@@ -196,9 +226,7 @@ class _GroupedPanelModelBase:  # type:ignore
         dict | None
             The t-values of the parameters, or None if not available
         """
-        if self._params_standard_errors is None:
-            raise ValueError("Model has not been fitted yet or no bootstrap was used")
-        return {param: self.params[param] / se for param, se in self._params_standard_errors.items()}
+        return {param: self.params[param] / se for param, se in self.params_standard_errors.items()}
 
     def p_values(self) -> dict:
         """
@@ -209,10 +237,7 @@ class _GroupedPanelModelBase:  # type:ignore
         dict | None
             The p-values of the parameters, or None if not available
         """
-        if self._params_standard_errors is None:
-            raise ValueError("Model has not been fitted yet or no bootstrap was used")
-        t_values = self.t_values
-        return {param: 2 * (1 - norm.cdf(np.abs(t))) for param, t in t_values.items()}
+        return {param: 2 * (1 - norm.cdf(np.abs(t))) for param, t in self.t_values.items()}
 
     @property
     def IC(self) -> dict:
@@ -289,13 +314,13 @@ class _GroupedPanelModelBase:  # type:ignore
             estimations.append(c.fit(**kwargs).params)
 
         self._bootstrap_estimations = estimations
-        self._params_standard_errors = {}
+        self._params_bootstrap_se = {}
 
         # FIXME standard errors are only correct for beta
         # a solution has to be computed for the other parameters
         for p in params:
             se = np.std([estimation[p] for estimation in estimations], axis=0)
-            self._params_standard_errors[p] = se
+            self._params_bootstrap_se[p] = se
 
     def get_confidence_intervals(self, confidence_level: float = 0.95) -> dict:
         """
@@ -309,12 +334,12 @@ class _GroupedPanelModelBase:  # type:ignore
         if self._params is None:
             raise ValueError("Model has not been fitted yet")
 
-        if self._params_standard_errors is None:
+        if self._params_bootstrap_se is None:
             raise ValueError("Model has not been fitted yet or no bootstrap was used")
 
         ci = {}
         z = norm.ppf((1 + confidence_level) / 2)  # z-score for the given confidence level
-        for param, se in self._params_standard_errors.items():
+        for param, se in self._params_bootstrap_se.items():
             ci[param] = (self._params[param] - z * se, self._params[param] + z * se)
 
         return ci
@@ -366,9 +391,12 @@ class _GroupedPanelModelBase:  # type:ignore
             "IC": self._IC,
             "use_bootstrap": self._use_bootstrap,
             "bootstrap_estimations": self._bootstrap_estimations if hasattr(self, "_bootstrap_estimations") else None,
-            "bootstrap_se": self._params_standard_errors if hasattr(self, "_params_standard_errors") else None,
+            "bootstrap_se": self._params_bootstrap_se if hasattr(self, "_params_bootstrap_se") else None,
+            "analytical_se": self._params_analytical_se if hasattr(self, "_params_analytical_se") else None,
             "bootstrap_conf_interval": (
-                self.get_confidence_intervals() if hasattr(self, "_params_standard_errors") else None
+                self.get_confidence_intervals()
+                if hasattr(self, "_params_bootstrap_se") or hasattr(self, "_params_analytical_se")
+                else None
             ),
             "N": self.N,
             "T": self.T,
@@ -412,7 +440,7 @@ class _GroupedPanelModelBase:  # type:ignore
             ["HQIC", ic.get("HQIC", "N/A")],
             ["sigma^2", ic.get("sigma^2", "N/A")],
             ["Seed", self._random_state if self._random_state is not None else "N/A"],
-            ["Use Bootstrap", self._use_bootstrap],
+            ["Standard Error type", "Bootstrap" if self._use_bootstrap else "Analytical"],
             ["Confidence Level", confidence_level],
         ]
 
@@ -436,7 +464,7 @@ class _GroupedPanelModelBase:  # type:ignore
         params_values = []
         # PARAMETERS TABLE
 
-        if self._params_standard_errors is not None:
+        if self._params_bootstrap_se is not None or self._params_analytical_se is not None:
             prev_first_idx = None  # Tracks the first index of the previous parameter entry
 
             for param in self.params_standard_errors.keys():
@@ -474,7 +502,7 @@ class _GroupedPanelModelBase:  # type:ignore
                 summary.tables.append(params_se_table)
 
         for param in self.params.keys():
-            if self._params_standard_errors is not None and param in self._params_standard_errors.keys():
+            if self._params_bootstrap_se is not None and param in self._params_bootstrap_se.keys():
                 continue
 
             if self.params[param] is None:

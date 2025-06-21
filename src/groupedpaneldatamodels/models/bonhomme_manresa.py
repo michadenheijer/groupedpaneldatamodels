@@ -658,6 +658,8 @@ def grouped_fixed_effects(
 
     # FIXME this should not be true for hetrogeneous theta
     # Because does not work
+    assert best_theta is not None, "No theta found, something went wrong in the estimation process."
+    assert best_g is not None, "No groupings found, something went wrong in the estimation process."
     if unit_specific_effects:
         eta = _compute_eta_hetrogeneous(y_bar, x_bar, best_theta)
         return best_theta, best_alpha, best_g, eta, best_iterations_used, best_objective_value, best_resid
