@@ -94,6 +94,7 @@ class _GroupedPanelModelBase:  # type:ignore
         self._params_analytical_se = None
         self._params_bootstrap_se = None
         self._hide_progressbar = kwargs.pop("hide_progressbar", False)
+        self._disable_analytical_se = kwargs.pop("disable_analytical_se", False)
         self._resid = None  # Residuals of the model, to be computed after fitting
 
         # TODO implement self._not_null (only if neccesary)
@@ -198,7 +199,7 @@ class _GroupedPanelModelBase:  # type:ignore
             The analytical standard errors of the parameters, or None if not available
         """
         if self._params_analytical_se is None:
-            raise ValueError("Model has not been fitted yet or no bootstrap was used")
+            raise ValueError("Model has not been fitted yet or no analytical se was implemented")
         return self._params_analytical_se
 
     @property
@@ -277,8 +278,8 @@ class _GroupedPanelModelBase:  # type:ignore
         # TODO implement this function
         raise NotImplementedError("Fit function not implemented yet")
 
-    def _get_bootstrap_confidence_intervals(
-        self, params: tuple[str], n_boot: int = 50, require_deepcopy=False, **kwargs
+    def _get_bootstrap_standard_errors(
+        self, params: tuple[str], n_boot: int = 50, require_deepcopy=False, balanced=True, **kwargs
     ):
         """
         Computes bootstrap confidence intervals for the parameters
@@ -305,6 +306,7 @@ class _GroupedPanelModelBase:  # type:ignore
         rngs = [default_rng(s) for s in child_seqs]
         c = deepcopy(self) if require_deepcopy else copy(self)
         c._use_bootstrap = False  # Disable bootstrap for the copied model)
+        c._disable_analytical_se = True  # Disable analytical standard errors for the copied model as is very slow
 
         for i in trange(n_boot, disable=self._hide_progressbar, desc=f"Bootstrap {self._name}@{hex(id(self))}"):
             sample = rngs[i].choice(self.N, replace=True, size=self.N)
@@ -322,7 +324,22 @@ class _GroupedPanelModelBase:  # type:ignore
             se = np.std([estimation[p] for estimation in estimations], axis=0)
             self._params_bootstrap_se[p] = se
 
-    def get_confidence_intervals(self, confidence_level: float = 0.95) -> dict:
+    def _get_analytical_standard_errors(self):
+        """
+        Computes analytical standard errors for the parameters.
+        This function is a placeholder and should be implemented in subclasses.
+
+        Returns
+        -------
+        dict
+            The analytical standard errors for the parameters
+        """
+        # TODO implement this function
+        raise NotImplementedError("Analytical standard errors function not implemented yet")
+
+    def get_confidence_intervals(
+        self, confidence_level: float = 0.95, conf_type: Literal["auto", "bootstrap", "analytical"] = "auto"
+    ) -> dict:
         """
         Returns the confidence intervals for the parameters
 
@@ -334,13 +351,20 @@ class _GroupedPanelModelBase:  # type:ignore
         if self._params is None:
             raise ValueError("Model has not been fitted yet")
 
-        if self._params_bootstrap_se is None:
-            raise ValueError("Model has not been fitted yet or no bootstrap was used")
-
         ci = {}
         z = norm.ppf((1 + confidence_level) / 2)  # z-score for the given confidence level
-        for param, se in self._params_bootstrap_se.items():
-            ci[param] = (self._params[param] - z * se, self._params[param] + z * se)
+
+        if conf_type == "auto":
+            for param, se in self.params_standard_errors.items():
+                ci[param] = (self._params[param] - z * se, self._params[param] + z * se)
+        elif conf_type == "bootstrap":
+            for param, se in self.params_bootstrap_standard_errors.items():
+                ci[param] = (self._params[param] - z * se, self._params[param] + z * se)
+        elif conf_type == "analytical":
+            for param, se in self.params_analytical_standard_errors.items():
+                ci[param] = (self._params[param] - z * se, self._params[param] + z * se)
+        else:
+            raise ValueError("conf_type must be one of 'auto', 'bootstrap', or 'analytical'")
 
         return ci
 
@@ -372,7 +396,7 @@ class _GroupedPanelModelBase:  # type:ignore
         # TODO implement this function
         raise NotImplementedError("Predict function not implemented yet")
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self, store_bootstrap_iterations=False) -> dict[str, Any]:
         """
         Converts the model to a dictionary
 
@@ -390,12 +414,19 @@ class _GroupedPanelModelBase:  # type:ignore
             "params": self._params,
             "IC": self._IC,
             "use_bootstrap": self._use_bootstrap,
-            "bootstrap_estimations": self._bootstrap_estimations if hasattr(self, "_bootstrap_estimations") else None,
+            "bootstrap_estimations": (
+                self._bootstrap_estimations
+                if store_bootstrap_iterations and hasattr(self, "_bootstrap_estimations")
+                else None
+            ),
             "bootstrap_se": self._params_bootstrap_se if hasattr(self, "_params_bootstrap_se") else None,
             "analytical_se": self._params_analytical_se if hasattr(self, "_params_analytical_se") else None,
             "bootstrap_conf_interval": (
-                self.get_confidence_intervals()
-                if hasattr(self, "_params_bootstrap_se") or hasattr(self, "_params_analytical_se")
+                self.get_confidence_intervals(conf_type="bootstrap") if self._params_bootstrap_se is not None else None
+            ),
+            "analytical_conf_interval": (
+                self.get_confidence_intervals(conf_type="analytical")
+                if self._params_analytical_se is not None
                 else None
             ),
             "N": self.N,
@@ -435,13 +466,13 @@ class _GroupedPanelModelBase:  # type:ignore
         ic = self._IC if self._IC is not None else {}
 
         right = [
-            ["AIC", ic.get("AIC", "N/A")],
-            ["BIC", ic.get("BIC", "N/A")],
-            ["HQIC", ic.get("HQIC", "N/A")],
-            ["sigma^2", ic.get("sigma^2", "N/A")],
+            ["AIC", self._show_float(ic.get("AIC", float("nan")))],
+            ["BIC", self._show_float(ic.get("BIC", float("nan")))],
+            ["HQIC", self._show_float(ic.get("HQIC", float("nan")))],
+            ["sigma^2", self._show_float(ic.get("sigma^2", float("nan")))],
             ["Seed", self._random_state if self._random_state is not None else "N/A"],
             ["Standard Error type", "Bootstrap" if self._use_bootstrap else "Analytical"],
-            ["Confidence Level", confidence_level],
+            ["Confidence Level", self._show_float(confidence_level)],
         ]
 
         top = [left + right for left, right in zip(left, right)]
@@ -461,13 +492,13 @@ class _GroupedPanelModelBase:  # type:ignore
             f"[{(1 - confidence_level)/2:.3f}",
             f"{(1 - (1 - confidence_level)/2):.3f}]",
         ]
-        params_values = []
         # PARAMETERS TABLE
 
         if self._params_bootstrap_se is not None or self._params_analytical_se is not None:
             prev_first_idx = None  # Tracks the first index of the previous parameter entry
 
             for param in self.params_standard_errors.keys():
+                params_values = []
                 for idx, v in np.ndenumerate(self.params[param]):
                     se = self.params_standard_errors[param][idx]
                     t_value = self.t_values[param][idx]
@@ -502,7 +533,9 @@ class _GroupedPanelModelBase:  # type:ignore
                 summary.tables.append(params_se_table)
 
         for param in self.params.keys():
-            if self._params_bootstrap_se is not None and param in self._params_bootstrap_se.keys():
+            if (
+                (self._params_bootstrap_se is not None) or (self._params_analytical_se is not None)
+            ) and param in self.params_standard_errors.keys():
                 continue
 
             if self.params[param] is None:
@@ -563,6 +596,86 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         self.G = int(G)
         self.heterogeneous_beta = heterogeneous_beta
 
+    def _fit_bm(self, n_boot: int = 50, **kwargs):
+        """
+        Fits the Bonhomme and Manresa model to the data
+
+        Parameters
+        ----------
+        n_boot: int
+            The number of bootstrap samples to use
+
+        Returns
+        -------
+        self
+            The fitted model
+        """
+        b, beta, g, eta, iterations, objective_value, resid = bonhomme_manresa(
+            self.dependent,
+            self.exog,
+            self.G,
+            hetrogeneous_theta=self.heterogeneous_beta,
+            unit_specific_effects=self._entity_effects,
+            **kwargs,
+        )
+
+        # Create dictionary mapping group number to list of individuals
+        g_members = {int(group): np.where(g == group)[0].tolist() for group in np.unique(g)}
+        self._params = {"beta": b.T, "alpha": beta, "g": g_members, "eta": eta}
+        self._resid = resid  # Store the residuals
+        num_params = self.G * self.T + self.N + self.K
+        self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
+        self._get_analytical_standard_errors()
+        self._get_bootstrap_standard_errors(("beta",), n_boot=n_boot, **kwargs)
+        self._post_fit()  # Set the fit duration and datetime
+        return self
+
+    def _fit_ssp(self, n_boot: int = 50, **kwargs):
+        """
+        Fits the Su and Shi Phillips model to the data
+
+        Parameters
+        ----------
+        n_boot: int
+            The number of bootstrap samples to use
+
+        Returns
+        -------
+        self
+            The fitted model
+        """
+        if self.heterogeneous_beta is False:
+            raise ValueError("Homogeneous beta is not supported for the Su and Shi Phillips model")
+
+        b, alpha, beta, resid = su_shi_phillips(
+            np.squeeze(self.dependent),
+            self.exog,
+            self.N,
+            self.T,
+            self.K,
+            self.G,
+            use_individual_effects=self._entity_effects,
+            **kwargs,
+        )
+        self._params = {"beta": beta.T, "b": b, "alpha": alpha}
+        self._resid = resid  # Store the residuals
+
+        # Get groupings
+        b = b.T
+        beta = beta.T
+        dists = np.linalg.norm(b[:, None, :] - beta[None, :, :], axis=2)
+        g = np.argmin(dists, axis=1)
+
+        g_members = {int(group): np.where(g == group)[0].tolist() for group in np.unique(g)}
+        self._params["g"] = g_members
+
+        num_params = np.unique_counts(np.round(np.concat([b.ravel(), beta.ravel(), alpha.ravel()]), 3)).counts.sum()
+        self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
+        self._get_analytical_standard_errors()
+        self._get_bootstrap_standard_errors(("beta",), n_boot=n_boot, **kwargs)
+        self._post_fit()  # Set the fit duration and datetime
+        return self
+
     def fit(self, **kwargs):
         """
         Fits the model to the data
@@ -575,54 +688,131 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         self._pre_fit()
         n_boot = kwargs.pop("n_boot", 50)
         if self._model_type == "bonhomme_manresa":
-            # TODO implement this function
-            b, beta, g, eta, iterations, objective_value, resid = bonhomme_manresa(
-                self.dependent,
-                self.exog,
-                self.G,
-                hetrogeneous_theta=self.heterogeneous_beta,
-                unit_specific_effects=self._entity_effects,
-                **kwargs,
-            )
-
-            # Create dictionary mapping group number to list of individuals
-            g_members = {int(group): np.where(g == group)[0].tolist() for group in np.unique(g)}
-
-            self._params = {"beta": b.T, "alpha": beta, "g": g_members, "eta": eta}
-            self._resid = resid  # Store the residuals
-            # TODO implement correct number of parameters
-            num_params = self.G * self.T + self.N + self.K
-            self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
-            self._get_bootstrap_confidence_intervals(("beta",), n_boot=n_boot, **kwargs)
-
-            self._post_fit()  # Set the fit duration and datetime
-            return self
+            return self._fit_bm(n_boot=n_boot, **kwargs)
         elif self._model_type == "su_shi_phillips":
-            if self.heterogeneous_beta is False:
-                raise ValueError("Homogeneous beta is not supported for the Su and Shi Phillips model")
-
-            b, alpha, beta, resid = su_shi_phillips(
-                np.squeeze(self.dependent),
-                self.exog,
-                self.N,
-                self.T,
-                self.K,
-                self.G,
-                use_individual_effects=self._entity_effects,
-                **kwargs,
-            )
-
-            self._params = {"beta": beta, "b": b, "alpha": alpha}
-            self._resid = resid  # Store the residuals
-            num_params = np.unique_counts(np.round(np.concat([b.ravel(), beta.ravel(), alpha.ravel()]), 3)).counts.sum()
-            # num_params = 0
-            self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
-            self._get_bootstrap_confidence_intervals(("beta",), n_boot=n_boot, **kwargs)
-
-            self._post_fit()  # Set the fit duration and datetime
-            return self
+            return self._fit_ssp(n_boot=n_boot, **kwargs)
 
         raise ValueError("Model must be either 'bonhomme_manresa' or 'su_shi_phillips'")
+
+    def _get_analytical_standard_errors_bm(self):
+        """
+        Computes analytical standard errors for the Bonhomme and Manresa model.
+        """
+        if self._params is None:
+            raise ValueError("Model has not been fitted yet")
+
+        if self._model_type != "bonhomme_manresa":
+            raise ValueError("This function is only applicable for the Bonhomme and Manresa model")
+
+        se_alpha = np.zeros((self.G, self.T))  # type:ignore
+        se_beta = np.zeros((self.G, self.K))  # type:ignore
+
+        g = self.params["g"]
+        resid = self._resid  # type:ignore
+        assert resid is not None, "Residuals must be computed before calculating standard errors"
+
+        for gamma in self.params["g"].keys():
+            se_alpha[gamma] = np.sqrt((resid[g[gamma]] ** 2).mean(axis=0))
+
+        self._params_analytical_se = {"alpha": se_alpha}
+
+        for gamma in self.params["g"].keys():
+            x = self.exog[g[gamma]]
+            x_bar = self.exog[g[gamma]].mean(axis=0)
+            x_diff = x - x_bar[np.newaxis, :, :]
+
+            total_sum_sigma = np.zeros((self.K, self.K))
+            for i in range(x.shape[0]):
+                for t in range(self.T):
+                    total_sum_sigma += x_diff[i, t, np.newaxis].T @ x_diff[i, t, np.newaxis]
+
+            sigma_beta_g = total_sum_sigma / (x.shape[0] * self.T)
+
+            resid_g = resid[g[gamma]]
+            total_sum_omega = np.zeros((self.K, self.K))
+            for i in range(x.shape[0]):
+                for t in range(self.T):
+                    for s in range(self.T):
+                        diff_t = x_diff[i, t, np.newaxis]
+                        diff_s = x_diff[i, s, np.newaxis]
+                        total_sum_omega += resid_g[i, t] * resid_g[i, s] * (diff_t.T @ diff_s)
+
+            omega_beta_g = total_sum_omega / (x.shape[0] * self.T)
+
+            var_beta_g = (
+                np.linalg.inv(sigma_beta_g) @ omega_beta_g @ np.linalg.inv(sigma_beta_g) / (x.shape[0] * self.T)
+            )
+            se_beta[gamma] = np.sqrt(np.diag(var_beta_g))
+
+        self._params_analytical_se["beta"] = se_beta
+
+    def _get_analytical_standard_errors_ssp(self):
+        """
+        Computes analytical standard errors for the Su and Shi Phillips model.
+        """
+        if self._params is None:
+            raise ValueError("Model has not been fitted yet")
+
+        if self._model_type != "su_shi_phillips":
+            raise ValueError("This function is only applicable for the Su and Shi Phillips model")
+
+        resid = self._resid  # type:ignore
+        assert resid is not None, "Residuals must be computed before calculating standard errors"
+
+        self._params_analytical_se = {}
+
+        if self._entity_effects:
+            se_alpha = np.atleast_2d(np.sqrt((resid**2).mean(axis=1))).T
+            self._params_analytical_se["alpha"] = se_alpha
+
+        g = self.params["g"]
+
+        se_beta = np.zeros((self.G, self.K))  # type:ignore
+
+        for gamma in self.params["g"].keys():
+            x = self.exog[g[gamma]]
+            x_bar = self.exog[g[gamma]].mean(axis=0)
+            x_diff = x - x_bar[np.newaxis, :, :]
+
+            total_sum_sigma = np.zeros((self.K, self.K))
+            for i in range(x.shape[0]):
+                for t in range(self.T):
+                    total_sum_sigma += x_diff[i, t, np.newaxis].T @ x_diff[i, t, np.newaxis]
+            sigma_beta_g = total_sum_sigma / (x.shape[0] * self.T)
+            resid_g = resid[g[gamma]]
+            total_sum_omega = np.zeros((self.K, self.K))
+            for i in range(x.shape[0]):
+                for t in range(self.T):
+                    for s in range(self.T):
+                        diff_t = x_diff[i, t, np.newaxis]
+                        diff_s = x_diff[i, s, np.newaxis]
+                        total_sum_omega += resid_g[i, t] * resid_g[i, s] * (diff_t.T @ diff_s)
+            omega_beta_g = total_sum_omega / (x.shape[0] * self.T)
+            var_beta_g = (
+                np.linalg.inv(sigma_beta_g) @ omega_beta_g @ np.linalg.inv(sigma_beta_g) / (x.shape[0] * self.T)
+            )
+            se_beta[gamma] = np.sqrt(np.diag(var_beta_g))
+
+        self._params_analytical_se["beta"] = se_beta
+
+    def _get_analytical_standard_errors(self):
+        """
+        Computes analytical standard errors for the parameters.
+        Note: this function will always be called, as the analytical standard errors are always computed
+
+        Returns
+        -------
+        dict
+            The analytical standard errors for the parameters
+        """
+        if self._disable_analytical_se:
+            return
+        elif self._model_type == "bonhomme_manresa":
+            return self._get_analytical_standard_errors_bm()
+        elif self._model_type == "su_shi_phillips":
+            return self._get_analytical_standard_errors_ssp()
+
+        raise NotImplementedError("Analytical standard errors function not implemented yet for this model")
 
 
 class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
@@ -680,12 +870,14 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
 
             # Create dictionary mapping group number to list of individuals
             g_members = {int(group): np.where(g == group)[0].tolist() for group in np.unique(g)}
-            self._params = {"beta": beta.T, "g": g_members, "F": F, "Lambda": Lambda}
+            self._params = {"beta": beta.T, "g": g_members, "F": F.T, "Lambda": Lambda}
 
             num_params = self.G * self.T + self.GF.sum() + self.N + self.K
             self._resid = resid  # Store the residuals
             self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
-            self._get_bootstrap_confidence_intervals(
+
+            self._get_analytical_standard_errors()
+            self._get_bootstrap_standard_errors(
                 ("beta",), n_boot=n_boot, **kwargs  # type:ignore
             )
 
@@ -700,13 +892,138 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
                 self.dependent, self.exog, self.N, self.T, self.K, self.G, R=self.R, **kwargs
             )
 
-            self._params = {"b": b, "beta": beta, "lambdas": lambdas, "factors": factors}
+            self._params = {"b": b, "beta": beta.T, "lambdas": lambdas, "factors": factors.T}
+
+            # Get groupings
+            _b = b.T
+            _beta = beta.T
+            dists = np.linalg.norm(_b[:, None, :] - _beta[None, :, :], axis=2)
+            g = np.argmin(dists, axis=1)
+            g_members = {int(group): np.where(g == group)[0].tolist() for group in np.unique(g)}
+            self._params["g"] = g_members
+
             self._resid = resid
             num_params = np.unique_counts(np.concat([b.ravel(), beta.ravel(), lambdas.ravel()])).counts.sum()
             self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
-            self._get_bootstrap_confidence_intervals(("beta",), n_boot=n_boot, **kwargs)
+            self._get_analytical_standard_errors()
+            self._get_bootstrap_standard_errors(("beta",), n_boot=n_boot, **kwargs)
 
             self._post_fit()  # Set the fit duration and datetime
             return self
 
         raise ValueError("Model must be either 'ando_bai' or 'su_ju'")
+
+    # FIXME this code does not actually compute the analytical standard errors for the Ando and Bai model
+    # as it computes the Bonhomme and Manresa model standard errors
+    def _get_analytical_standard_errors_ab(self):
+        """
+        Computes analytical standard errors for the Bonhomme and Manresa model.
+        """
+        if self._params is None:
+            raise ValueError("Model has not been fitted yet")
+
+        if self._model_type != "ando_bai":
+            raise ValueError("This function is only applicable for the Bonhomme and Manresa model")
+
+        se_beta = np.zeros((self.G, self.K))  # type:ignore
+
+        g = self.params["g"]
+        resid = self._resid  # type:ignore
+        assert resid is not None, "Residuals must be computed before calculating standard errors"
+        self._params_analytical_se = {}
+
+        for gamma in self.params["g"].keys():
+            assert isinstance(self.GF, np.ndarray), "Group members must be a list of indices"
+
+            x = self.exog[g[gamma]]
+
+            x_bar = self.exog[g[gamma]].mean(axis=0)
+            x_diff = x - x_bar[np.newaxis, :, :]
+
+            total_sum_sigma = np.zeros((self.K, self.K))
+            for i in range(x.shape[0]):
+                for t in range(self.T):
+                    total_sum_sigma += x_diff[i, t, np.newaxis].T @ x_diff[i, t, np.newaxis]
+
+            sigma_beta_g = total_sum_sigma / (x.shape[0] * self.T)
+
+            resid_g = resid[g[gamma]]
+            total_sum_omega = np.zeros((self.K, self.K))
+            for i in range(x.shape[0]):
+                for t in range(self.T):
+                    for s in range(self.T):
+                        diff_t = x_diff[i, t, np.newaxis]
+                        diff_s = x_diff[i, s, np.newaxis]
+                        total_sum_omega += resid_g[i, t] * resid_g[i, s] * (diff_t.T @ diff_s)
+
+            omega_beta_g = total_sum_omega / (x.shape[0] * self.T)
+
+            var_beta_g = (
+                np.linalg.inv(sigma_beta_g) @ omega_beta_g @ np.linalg.inv(sigma_beta_g) / (x.shape[0] * self.T)
+            )
+            se_beta[gamma] = np.sqrt(np.diag(var_beta_g))
+
+        self._params_analytical_se["beta"] = se_beta
+
+    def _get_analytical_standard_errors_sj(self):
+        """
+        Computes analytical standard errors for the Su and Shi Phillips model.
+        """
+        if self._params is None:
+            raise ValueError("Model has not been fitted yet")
+
+        if self._model_type != "su_ju":
+            raise ValueError("This function is only applicable for the Su and Shi Phillips model")
+
+        resid = self._resid  # type:ignore
+        assert resid is not None, "Residuals must be computed before calculating standard errors"
+
+        self._params_analytical_se = {}
+        g = self.params["g"]
+
+        se_beta = np.zeros((self.G, self.K))  # type:ignore
+
+        for gamma in self.params["g"].keys():
+            x = self.exog[g[gamma]]
+            x_bar = self.exog[g[gamma]].mean(axis=0)
+            x_diff = x - x_bar[np.newaxis, :, :]
+
+            total_sum_sigma = np.zeros((self.K, self.K))
+            for i in range(x.shape[0]):
+                for t in range(self.T):
+                    total_sum_sigma += x_diff[i, t, np.newaxis].T @ x_diff[i, t, np.newaxis]
+            sigma_beta_g = total_sum_sigma / (x.shape[0] * self.T)
+            resid_g = resid[g[gamma]]
+            total_sum_omega = np.zeros((self.K, self.K))
+            for i in range(x.shape[0]):
+                for t in range(self.T):
+                    for s in range(self.T):
+                        diff_t = x_diff[i, t, np.newaxis]
+                        diff_s = x_diff[i, s, np.newaxis]
+                        total_sum_omega += resid_g[i, t] * resid_g[i, s] * (diff_t.T @ diff_s)
+            omega_beta_g = total_sum_omega / (x.shape[0] * self.T)
+            var_beta_g = (
+                np.linalg.inv(sigma_beta_g) @ omega_beta_g @ np.linalg.inv(sigma_beta_g) / (x.shape[0] * self.T)
+            )
+            se_beta[gamma] = np.sqrt(np.diag(var_beta_g))
+
+        self._params_analytical_se["beta"] = se_beta
+
+    def _get_analytical_standard_errors(self):
+        """
+        Computes analytical standard errors for the parameters.
+        Note: this function will always be called, as the analytical standard errors are always computed
+
+        Returns
+        -------
+        dict
+            The analytical standard errors for the parameters
+        """
+        if self._disable_analytical_se:
+            return
+        elif self._model_type == "ando_bai":
+            return self._get_analytical_standard_errors_ab()
+        elif self._model_type == "su_ju":
+            return self._get_analytical_standard_errors_sj()
+
+        raise NotImplementedError("Analytical standard errors function not implemented yet for this model")

@@ -654,7 +654,7 @@ def grouped_fixed_effects(
             best_g, best_alpha, best_theta = _reorder_groups_hetrogeneous(g, alpha, theta, hetrogeneous_theta)
             # best_g, best_alpha = g, alpha
             best_iterations_used = iterations_used
-            best_resid = resid.reshape(-1)  # NOTE always reshape to 1d array
+            best_resid = resid  # NOTE always reshape to 1d array
 
     # FIXME this should not be true for hetrogeneous theta
     # Because does not work

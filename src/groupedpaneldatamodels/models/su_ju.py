@@ -141,7 +141,7 @@ def interactive_effects_estimation(y, x, N, T, K, G, R, max_iter=1000, only_bfgs
     factors = eigh(res_var).eigenvectors[:, -R:]
     factors = factors[:, ::-1]  # Reverse to have descending order
 
-    lambdas = np.zeros((R, N))
+    lambdas = np.zeros((R, N), dtype=np.float32)
 
     for i in range(R):
         lambdas[i, :] = factors[:, i].T @ res
