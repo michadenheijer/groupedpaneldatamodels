@@ -1,0 +1,7 @@
+numpy~=2.2.0
+pandas~=2.2.0
+scipy~=1.15.2
+scikit-learn~=1.6.1
+skglm~=0.4
+numba~=0.61.0
+statsmodels~=0.14.0
