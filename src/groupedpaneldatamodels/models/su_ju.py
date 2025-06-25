@@ -66,7 +66,7 @@ def _generate_initial_estimates(y, x, N, T, K, G):
     return beta_init, alpha_init, mu_init
 
 
-def order_alpha(alpha):
+def _order_alpha(alpha):
     """Reorders the groups based on the first value of alpha"""
     # FIXME this is not the best way to do this
     # But it works for now
@@ -75,11 +75,51 @@ def order_alpha(alpha):
     return ordered_alpha
 
 
-def _compute_resid(y, x, beta, factors, lambdas, N, T):
-    return y - np.sum(x * beta.T[:, None, :], axis=2) - (factors @ lambdas).T
+def _compute_resid(y, x, beta, alpha, factors, lambdas, N, T):
+    diff = beta[:, :, None] - alpha[:, None, :]
+    dist2 = np.sum(diff**2, axis=0)
+    nearest = np.argmin(dist2, axis=1)
+    beta_rounded = alpha[:, nearest]
+
+    return y - np.sum(x * beta_rounded.T[:, None, :], axis=2) - (factors @ lambdas).T
 
 
-def interactive_effects_estimation(y, x, N, T, K, G, R, max_iter=1000, only_bfgs=True, tol=1e-6, kappa=0.1):
+def interactive_effects_estimation(
+    y: np.ndarray,
+    x: np.ndarray,
+    N: int,
+    T: int,
+    K: int,
+    G: int,
+    R: int,
+    max_iter: int = 1000,
+    only_bfgs: bool = True,
+    tol: float = 1e-6,
+    kappa: float = 0.1,
+):
+    """Internal function to estimate the interactive effects model as described by Su and Ju (2018).
+
+    Args:
+        y (np.ndarray): Dependent variable, shape (N, T, 1).
+        x (np.ndarray): Explanatory variables, shape (N, T, K).
+        N (int): Number of individuals (cross-sectional units).
+        T (int): Number of time periods.
+        K (int): Number of explanatory variables.
+        G (int): Number of groups.
+        R (int): Number of common factors (global).
+        max_iter (int, optional): Maximum number of acceptable iterations, may be too large. Defaults to 1000.
+        only_bfgs (bool, optional): Only uses BFGS. Defaults to True.
+        tol (float, optional): Acceptable tolerance for the stopping condition. Defaults to 1e-6.
+        kappa (float, optional): Kappa penalty parameter. Defaults to 0.1.
+
+    Returns:
+        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+            - beta: Estimated coefficients for each individual, shape (K, N)
+            - alpha: Ordered group-level representative coefficients, shape (K, G)
+            - lambdas: Factor loadings, shape (R, N)
+            - factors: Common factors, shape (T, R)
+            - resid: Residuals of the model, shape (N, T)
+    """
     y = np.squeeze(y, axis=2)
     beta, alpha, _ = _generate_initial_estimates(y, x, N, T, K, G)
 
@@ -146,6 +186,6 @@ def interactive_effects_estimation(y, x, N, T, K, G, R, max_iter=1000, only_bfgs
     for i in range(R):
         lambdas[i, :] = factors[:, i].T @ res
 
-    resid = _compute_resid(y, x, beta, factors, lambdas, N, T)
+    resid = _compute_resid(y, x, beta, alpha, factors, lambdas, N, T)
 
-    return beta, order_alpha(alpha), lambdas, factors, resid
+    return beta, _order_alpha(alpha), lambdas, factors, resid

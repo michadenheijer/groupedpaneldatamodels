@@ -1,10 +1,9 @@
 # TODO
 # - Check imports
-
+from ..utils import superfast_lstsq
 
 import numpy as np
 from numpy.linalg import lstsq
-from scipy.linalg import lstsq as lstsq_sp
 
 from numba import njit
 
@@ -16,71 +15,6 @@ warnings.simplefilter(action="ignore", category=RuntimeWarning)
 
 from numba import njit
 import numpy as np
-
-
-import numpy as np
-from numba import njit
-
-
-import numpy as np
-from numba import njit
-
-
-import numpy as np
-from numba import njit
-
-
-import numpy as np
-from numba import njit
-
-
-@njit
-def fast_qr_f32(A, b, tol):
-    """
-    Float-32 QR least-squares with empty-matrix guard.
-
-    Always returns a 2-D array (n, k) so Numba sees a single return type.
-    """
-    # Promote to float32 and make RHS 2-D -------------------------------
-    A32 = A.astype(np.float32)
-    b32 = b.astype(np.float32).reshape(-1, 1) if b.ndim == 1 else b.astype(np.float32)
-
-    m, n = A32.shape
-    k = b32.shape[1]  # number of RHS
-
-    # --------- EARLY EXIT for empty design or empty sample -------------
-    if m == 0 or n == 0:
-        return np.zeros((n, k), dtype=np.float32), False
-
-    # ----------------------- QR factorisation --------------------------
-    Q, R = np.linalg.qr(A32)
-
-    # Cheap full-rank test ---------------------------------------------
-    rdiag_ok = True
-    rcond = tol
-    rmin = n if m >= n else m
-    for i in range(rmin):
-        if abs(R[i, i]) <= rcond:
-            rdiag_ok = False
-            break
-
-    if rdiag_ok:  # fast path
-        X = np.linalg.solve(R, np.ascontiguousarray(Q.T) @ np.ascontiguousarray(b32))  # (n, k)
-        return X, True
-
-    # fallback signal – same array shape/type ---------------------------
-    return np.empty((n, k), dtype=np.float32), False
-
-
-# NOTE disable superfast_lstsq for now, as it is untested
-def superfast_lstsq(A, b, tol=1e-5):
-    # X, ok = fast_qr_f32(A, b, tol)
-    # if ok:  # QR succeeded
-    #     return X.ravel() if b.ndim == 1 else X
-
-    # robust fallback (also works for empty A)
-    Xf, *_ = np.linalg.lstsq(A.astype(np.float32), b.astype(np.float32), rcond=-1)
-    return Xf
 
 
 # @njit
@@ -309,7 +243,7 @@ def _grouped_fixed_effects_iteration_vns(y, x, G: int, N: int, K: int, max_iter=
 
 
 # FIXME not used right now but still neccesary
-def compute_statistics(objective_value, N, T, K, G):
+def _compute_statistics(objective_value, N, T, K, G):
     """Computes the statistics based on the objective value, N, T, K and G"""
     # FIXME this is not the best way to do this
     # But it works for now
@@ -572,18 +506,38 @@ def _compute_eta_hetrogeneous(y_bar, x_bar, theta):
 
 
 def grouped_fixed_effects(
-    y,
-    x,
-    G,
-    max_iter=10000,
-    tol=1e-6,
-    gfe_iterations=100,
-    unit_specific_effects=False,
-    enable_vns=False,
-    hetrogeneous_theta=True,
+    y: np.ndarray,
+    x: np.ndarray,
+    G: int,
+    max_iter: int = 10000,
+    tol: float = 1e-6,
+    gfe_iterations: int = 100,
+    unit_specific_effects: bool = False,
+    enable_vns: bool = False,
+    hetrogeneous_theta: bool = True,
 ):
-    """
-    Computes the grouped fixed effects using the algorithm described in the paper.
+    """Internal function to estimate grouped fixed effects as described by Bonhomme and Manresa (2015).
+
+    Args:
+        y (np.ndarray): Dependent variable, shape (N, T, 1).
+        x (np.ndarray): Explanatory variables, shape (N, T, K).
+        G (int): Number of groups.
+        max_iter (int, optional): Maximum number of iterations. Defaults to 10000.
+        tol (float, optional): Acceptable tolerance for stopping condition. Defaults to 1e-6.
+        gfe_iterations (int, optional): Number of unique starting points for the algorithm. Defaults to 100.
+        unit_specific_effects (bool, optional): Enables individual effects. Defaults to False.
+        enable_vns (bool, optional): Enables VNS algorithm. Defaults to False.
+        hetrogeneous_theta (bool, optional): Enables heterogeneous beta. Defaults to True.
+
+    Returns:
+        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray | None, int, float, np.ndarray]:
+            - best_theta: Estimated group-specific coefficients, shape (K,) or (K, G)
+            - best_alpha: Estimated group-level fixed effects, shape (G,) or (G, T)
+            - best_g: Group assignments for each unit, shape (N,)
+            - eta: Unit-specific effects if enabled, shape (N, 1) or None
+            - best_iterations_used: Number of iterations used in the best run
+            - best_objective_value: Objective function value of the best run
+            - best_resid: Residuals of the model, shape (N, T)
     """
     # FIXME not really required if unit_specific_effects is False
     # But this seems like the easiest implementation

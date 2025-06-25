@@ -56,28 +56,37 @@ def compute_hqic(n, k, var_resid):
     return n * np.log(var_resid) + 2 * k * np.log(np.log(n))
 
 
-def compute_r_squared(y, y_hat):
-    return np.corrcoef(y, y_hat)[0, 1] ** 2
+def compute_statistics(n: int, k: int, resid: np.ndarray, **kwargs):
+    """
+    Compute residual variance and information criteria based on model residuals.
 
+    Parameters:
+        n (int): Total number of observations.
+        k (int): Number of parameters in the model.
+        resid (np.ndarray): Residuals from the model, shape (N, T).
+        **kwargs: Additional keyword arguments to control inclusion of metrics:
+            - no_aic (bool): If True, do not compute AIC.
+            - no_bic (bool): If True, do not compute BIC.
+            - include_hqic (bool): If True, compute HQIC.
 
-# NOTE only resid computed, so R^2 is not available
-def compute_statistics(n, k, resid, **kwargs):
-    var_resid = np.var(resid, ddof=k)  # Residual variance with degrees of freedom correction
-    # var_biased_resid = np.var(resid, ddof=0)  # Residual variance without degrees of freedom correction
-    var_biased_resid = np.mean(resid**2)  # Biased residual variance (not corrected for degrees of freedom)
+    Returns:
+        dict[str, float | None]: A dictionary containing:
+            - "sigma^2": unbiased residual variance
+            - "AIC": Akaike Information Criterion (if computed)
+            - "BIC": Bayesian Information Criterion (if computed)
+            - "HQIC": Hannan-Quinn Information Criterion (if computed)
+    """
+    var_resid = np.var(resid, ddof=k)
+    var_biased_resid = np.mean(resid**2)
 
     return {
         "sigma^2": var_resid,
         "AIC": compute_aic(n, k, var_biased_resid) if not kwargs.get("no_aic", False) else None,
         "BIC": compute_bic(n, k, var_biased_resid) if not kwargs.get("no_bic", False) else None,
         "HQIC": compute_hqic(n, k, var_biased_resid) if kwargs.get("include_hqic", False) else None,
-        # "R^2": compute_r_squared(y, y_hat) if not kwargs.get("no_r_squared", False) else None,
     }
 
 
-# NOTE this is still very untested and may not work as expected
-# NOTE this should probably be moved to a separate file, but for now it is here
-# NOTE should disable bootstrap or any other heavy computations as they are not needed for grid search
 def grid_search_by_ic(
     model_cls: Type["_GroupedPanelModelBase"],
     param_ranges: dict[str, list[Any]],
@@ -85,6 +94,25 @@ def grid_search_by_ic(
     fit_params: dict[str, Any] | None = None,
     ic_criterion: Literal["BIC", "AIC", "HQIC"] = "BIC",
 ) -> tuple["_GroupedPanelModelBase", dict[str, Any], dict[str, Any]]:
+    """
+    Perform a grid search over model hyperparameters using information criteria.
+
+    This function fits the given model class over all combinations of specified parameters
+    and selects the best model based on the specified information criterion (e.g., BIC, AIC, HQIC).
+
+    Parameters:
+        model_cls (Type[_GroupedPanelModelBase]): The model class to be fitted (e.g., GroupedFixedEffects, GroupedInteractiveEffects).
+        param_ranges (dict[str, list[Any]]): Dictionary where keys are parameter names and values are lists of candidate values.
+        init_params (dict[str, Any]): Initial parameters passed to model instantiation.
+        fit_params (dict[str, Any] | None): Optional parameters passed to the `.fit()` method of the model.
+        ic_criterion (Literal["BIC", "AIC", "HQIC"]): Criterion used to select the best model. Defaults to "BIC".
+
+    Returns:
+        tuple[_GroupedPanelModelBase, dict[str, Any], dict[str, Any]]:
+            - The best-fitted model.
+            - Dictionary of all parameter combinations with their associated IC values.
+            - The parameters corresponding to the best model.
+    """
     params = param_ranges.keys()
 
     # Get all combinations of the parameters
@@ -106,6 +134,7 @@ def grid_search_by_ic(
         # Create a copy of the model to avoid modifying the original
         init_params = init_params or {}
         init_params.update(params_dict)
+        init_params.update({"disable_analytical_se": True})  # Disable analytical SE for grid search
         init_params["use_bootstrap"] = False  # Disable bootstrap for grid search, as it is not needed and can be slow
         model = model_cls(**(init_params))
 

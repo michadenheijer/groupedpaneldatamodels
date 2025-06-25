@@ -11,7 +11,7 @@ from .models.ando_bai import (
 )
 from .models.bonhomme_manresa import (
     grouped_fixed_effects as bonhomme_manresa,
-    compute_statistics as bm_compute_statistics,
+    _compute_statistics as bm_compute_statistics,
 )
 from .models.su_ju import interactive_effects_estimation as su_ju
 from .models.su_shi_phillips import fixed_effects_estimation as su_shi_phillips
@@ -29,7 +29,8 @@ from statsmodels.iolib.table import SimpleTable
 from numpy.typing import ArrayLike
 from numpy.random import default_rng, SeedSequence
 from scipy.stats import norm
-from tqdm import trange
+from tqdm import tqdm
+from joblib import Parallel, delayed
 
 import pandas as pd
 import numpy as np
@@ -46,18 +47,9 @@ import numpy as np
 # Base Class
 class _GroupedPanelModelBase:  # type:ignore
     """
-    Base class for all models
-
-    Parameters
-    ----------
-    dependent: array_like
-        The dependent variable
-    exog: array_like
-        The exogenous variables
-    weights: array_like
-        The weights
-    check_rank: bool
-        Whether to check the rank of the model, default is True, skipping may improve performance.
+    Base class for grouped panel data models.
+    This class provides the basic structure and functionality for grouped panel data models.
+    It is not meant to be instantiated directly, but rather to be subclassed by specific models.
     """
 
     def __init__(
@@ -68,15 +60,27 @@ class _GroupedPanelModelBase:  # type:ignore
         random_state=None,
         **kwargs,
     ):
+        """
+        Initialize the base class for grouped panel data models.
+
+        This class sets up the core structure used by all grouped panel estimators, including
+        the dependent variable, exogenous variables, bootstrap settings, and general configuration options.
+
+        Parameters:
+            dependent (ArrayLike): Dependent variable array, expected shape (N, T, 1).
+            exog (ArrayLike): Exogenous variable array, expected shape (N, T, K).
+            use_bootstrap (bool, optional): Whether to compute bootstrap-based standard errors. Defaults to False.
+            random_state (int, optional): Seed for the random number generator. Defaults to None.
+            **kwargs: Optional keyword arguments for advanced configuration.
+                - hide_progressbar (bool): Whether to suppress progress bars during fitting. Defaults to False.
+                - disable_analytical_se (bool): Whether to skip analytical standard error calculation. Defaults to False.
+        """
         # TODO Voor nu alles omzetten naar een array, maar weet niet hoe handig dat altijd is
         # want je verliest wel de namen van de kolommen, misschien net als linearmodels een
         # aparte class hiervoor maken
-        # self.dependent = pd.DataFrame(dependent)  # type:ignore
-        # self.exog = pd.DataFrame(exog)  # type:ignore
         self.dependent = np.asarray(dependent)
         self.exog = np.asarray(exog)
         self._N, self._T, self._K = self.exog.shape  # type:ignore
-        self._constant = False  # Set to False and update when neccesary # FIXME not used
         # Parallel‑safe random number generator
         self._rng = default_rng(random_state)
         self._random_state = random_state
@@ -111,18 +115,6 @@ class _GroupedPanelModelBase:  # type:ignore
     def _validate_data(self) -> None:
         # TODO not that relevant for now
         pass
-
-    @property
-    def _has_constant(self) -> bool:
-        """
-        Returns whether the model has a constant
-
-        Returns
-        -------
-        bool
-            Whether the model has a constant
-        """
-        return self._constant
 
     @property
     def N(self) -> int:
@@ -259,35 +251,50 @@ class _GroupedPanelModelBase:  # type:ignore
     # FIXME add more pre-fit checks if needed
     # e.g. check if the data is in the right format, if the dependent variable is a 3D array, etc.
     def _pre_fit(self):
+        """
+        Internal method to prepare the model for fitting.
+        """
         self._fit_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self._fit_start = process_time()  # Start time for fitting the model
 
     def _post_fit(self):
+        """
+        Internal method to finalize the model after fitting.
+        This method should be called after the model has been fitted.
+        """
         assert self._fit_start is not None, "Fit start time is not set. Did you call _pre_fit()?"
         self._fit_duration = process_time() - self._fit_start  # Calculate the time taken to fit the model
 
     def fit(self) -> "_GroupedPanelModelBase":
         """
-        Fits the model to the data
+        Fit the grouped panel data model to the provided dataset.
 
-        Returns
-        -------
-        self
-            The fitted model
+        This method should be implemented by subclasses of `_GroupedPanelModelBase`. It defines
+        the main estimation routine and is responsible for setting the model's fitted parameters,
+        residuals, and any diagnostics such as information criteria or standard errors.
+
+        Returns:
+            _GroupedPanelModelBase: The fitted model instance.
+
+        Raises:
+            NotImplementedError: This base method must be overridden by a subclass.
         """
         # TODO implement this function
         raise NotImplementedError("Fit function not implemented yet")
 
     def _get_bootstrap_standard_errors(
-        self, params: tuple[str], n_boot: int = 50, require_deepcopy=False, balanced=True, **kwargs
+        self, params: tuple[str], n_boot: int = 50, require_deepcopy=False, n_jobs=-1, **kwargs
     ):
         """
-        Computes bootstrap confidence intervals for the parameters
+        Computes bootstrap standard errors for the parameters.
 
         Parameters
         ----------
-        n_boot: int
-            The number of bootstrap samples to use
+        params: tuple[str], required, displays which parameters to compute the bootstrap standard errors for
+        n_boot: int, optional, the number of bootstrap samples to use, default is 50
+        require_deepcopy: bool, optional, whether to require a deepcopy of the model, default is False
+        balanced: bool, optional, whether to use balanced bootstrap sampling, default is False, not implemented yet
+        **kwargs: Additional keyword arguments that can be passed to the model fitting function.
 
         Returns
         -------
@@ -298,22 +305,24 @@ class _GroupedPanelModelBase:  # type:ignore
         if not self._use_bootstrap:
             return None
 
-        # FIXME this is possibly the worst method to implement this, but I guess this is it
-        estimations = []
-        # Create child RNGs so each bootstrap draw has an independent stream.
+        # Prepare parallel bootstrap estimations using joblib
         seed_seq = SeedSequence(self._random_state)
         child_seqs = seed_seq.spawn(n_boot)
         rngs = [default_rng(s) for s in child_seqs]
-        c = deepcopy(self) if require_deepcopy else copy(self)
-        c._use_bootstrap = False  # Disable bootstrap for the copied model)
-        c._disable_analytical_se = True  # Disable analytical standard errors for the copied model as is very slow
 
-        for i in trange(n_boot, disable=self._hide_progressbar, desc=f"Bootstrap {self._name}@{hex(id(self))}"):
-            sample = rngs[i].choice(self.N, replace=True, size=self.N)
-            c._rng = rngs[i]  # ensure the copied model inherits its own generator
-            c.dependent = self.dependent[sample, :, :]
-            c.exog = self.exog[sample, :, :]
-            estimations.append(c.fit(**kwargs).params)
+        def _bootstrap_iteration(rng):
+            model_copy = deepcopy(self) if require_deepcopy else copy(self)
+            model_copy._use_bootstrap = False
+            model_copy._disable_analytical_se = True
+            sample = rng.choice(self.N, replace=True, size=self.N)
+            model_copy._rng = rng
+            model_copy.dependent = self.dependent[sample, :, :]
+            model_copy.exog = self.exog[sample, :, :]
+            return model_copy.fit(**kwargs).params
+
+        estimations = Parallel(n_jobs=n_jobs)(
+            delayed(_bootstrap_iteration)(rng) for rng in tqdm(rngs, disable=self._hide_progressbar)
+        )
 
         self._bootstrap_estimations = estimations
         self._params_bootstrap_se = {}
@@ -321,7 +330,7 @@ class _GroupedPanelModelBase:  # type:ignore
         # FIXME standard errors are only correct for beta
         # a solution has to be computed for the other parameters
         for p in params:
-            se = np.std([estimation[p] for estimation in estimations], axis=0)
+            se = np.std([estimation[p] for estimation in estimations], axis=0, ddof=1)  # type:ignore
             self._params_bootstrap_se[p] = se
 
     def _get_analytical_standard_errors(self):
@@ -341,7 +350,12 @@ class _GroupedPanelModelBase:  # type:ignore
         self, confidence_level: float = 0.95, conf_type: Literal["auto", "bootstrap", "analytical"] = "auto"
     ) -> dict:
         """
-        Returns the confidence intervals for the parameters
+        Returns the confidence intervals for the parameters, prefers bootstrap if available, otherwise analytical
+
+        Parameters
+        ----------
+        confidence_level: float, optional, the confidence level for the intervals, default is 0.95
+        conf_type: str, optional, the type of confidence intervals to compute, can be 'auto', 'bootstrap', or 'analytical', default is 'auto'
 
         Returns
         -------
@@ -377,6 +391,7 @@ class _GroupedPanelModelBase:  # type:ignore
     ) -> ArrayLike:
         """
         Predicts the dependent variable based on the parameters and exogenous variables
+        This function is a placeholder and should be implemented in subclasses.
 
         Parameters
         ----------
@@ -398,7 +413,13 @@ class _GroupedPanelModelBase:  # type:ignore
 
     def to_dict(self, store_bootstrap_iterations=False) -> dict[str, Any]:
         """
-        Converts the model to a dictionary
+        Converts the model to a dictionary,
+        which can be useful for serialization or inspection.
+
+        Parameters
+        ----------
+        store_bootstrap_iterations: bool, optional, whether to store the bootstrap iterations in the dictionary, default is False, requires a lot of memory
+        If set to True, the bootstrap estimations will be included in the dictionary.
 
         Returns
         -------
@@ -436,18 +457,52 @@ class _GroupedPanelModelBase:  # type:ignore
 
     @staticmethod
     def _show_float(value: float, precision: int = 4) -> str:
+        """Formats a float value to a string with a specified precision.
+
+        Args:
+            value (float): The float value to format.
+            precision (int, optional): The precision that is required. Defaults to 4.
+
+        Returns:
+            str: The formatted string representation of the float value.
+        """
         try:
             return f"{value:.{precision}f}" if not np.isnan(value) else "N/A"
         except Exception:
             return str(value)
 
+    # FIXME add flexibility to choose between bootstrap and analytical standard errors
     def summary(
         self,
         confidence_level: float = 0.95,
+        standard_errors: Literal["auto", "bootstrap", "analytical"] = "auto",
     ):
+        """
+        Generates a summary of the model, including information about the model type, observations, exogenous variables,
+        groups, fit time, fit duration, and standard errors.
+
+        Args:
+            confidence_level (float, optional): The preferred confidence lebel . Defaults to 0.95.
+            standard_errors (Literal["auto", "bootstrap", "analytical"], optional): Which type of errors to prefer. Defaults to "auto".
+            If "auto", it will use bootstrap if available, otherwise analytical standard errors. All other values will raise a NotImplementedError.
+            As this is not implemented yet.
+
+        Raises:
+            ValueError: _Model has not been fitted yet_
+            NotImplementedError: _Standard errors type other than 'auto' is not implemented yet, you can manually view them using `model.params_bootstrap_standard_errors` or `model.params_analytical_standard_errors`_
+
+        Returns:
+            Summary: A summary object containing the model information, parameters, and standard errors.
+        """
         # Ensure the model has been fitted
         if self._params is None:
             raise ValueError("Model has not been fitted yet")
+
+        if standard_errors != "auto":
+            raise NotImplementedError(
+                "Standard errors type other than 'auto' is not implemented yet"
+                + " you can manually view them using `model.params_bootstrap_standard_errors` or `model.params_analytical_standard_errors`"
+            )
 
         # INFORMATION HEADERS
         left = [
@@ -574,6 +629,27 @@ class _GroupedPanelModelBase:  # type:ignore
 
 
 class GroupedFixedEffects(_GroupedPanelModelBase):
+    """
+    GroupedFixedEffects
+
+    A model for estimating grouped fixed effects in panel data, supporting both the
+    Bonhomme and Manresa (2015) and Su, Shi, and Phillips (2016) estimators.
+
+    This class clusters units into a specified number of latent groups and estimates either:
+    - Group-specific slope coefficients (heterogeneous), or
+    - A shared slope coefficient (homogeneous)
+
+    depending on the specified configuration. It also optionally includes individual
+    (entity-specific) fixed effects and supports bootstrap inference.
+
+    Typical usage:
+        >>> model = GroupedFixedEffects(y, x, G=3)
+        >>> model.fit(max_iter=100)
+        >>> model.summary()
+
+    Attributes such as coefficients, group assignments, and residuals are made available after fitting.
+    """
+
     def __init__(
         self,
         dependent: ArrayLike,
@@ -585,6 +661,25 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         entity_effects: bool = False,
         **kwargs,
     ):
+        """
+        Initialize the GroupedFixedEffects model for panel data analysis.
+
+        This class estimates grouped fixed effects using either the Bonhomme and Manresa (2015)
+        or Su, Shi, and Phillips (2016) estimators. The model is designed for settings where units
+        can be grouped based on similarities in their fixed effects or slope coefficients.
+
+        Parameters:
+            dependent (np.ndarray): A 3D array of Y, structured as (N, T, 1), where N is the number of individuals, T is the number of time periods.
+            exog (np.ndarray): A 3D array of X, structured as (N, T, K), containing the exogenous regressors.
+            G (int): The (maximum) number of latent groups to estimate.
+            use_bootstrap (bool, optional): Whether or not to estimate the standard errors using the Bootstrap method. Defaults to False.
+            model (Literal["bonhomme_manresa", "su_shi_phillips"], optional): Which estimator to use: "bonhomme_manresa" (default) or "su_shi_phillips".
+            heterogeneous_beta (bool, optional): Whether the coefficients β should be allowed to differ across groups. If False, they are homogeneous. Defaults to True.
+            entity_effects (bool, optional): Whether to include individual (entity-specific) fixed effects in the estimation. Recommended for "su_shi_phillips". Defaults to False.
+
+        Raises:
+            ValueError: If the specified model is not supported.
+        """
         super().__init__(dependent, exog, use_bootstrap, **kwargs)
 
         self._entity_effects = entity_effects
@@ -610,6 +705,7 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         self
             The fitted model
         """
+        boot_n_jobs = kwargs.pop("boot_n_jobs", -1)  # type:ignore
         b, beta, g, eta, iterations, objective_value, resid = bonhomme_manresa(
             self.dependent,
             self.exog,
@@ -623,10 +719,11 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         g_members = {int(group): np.where(g == group)[0].tolist() for group in np.unique(g)}
         self._params = {"beta": b.T, "alpha": beta, "g": g_members, "eta": eta}
         self._resid = resid  # Store the residuals
+        assert resid is not None, "Residuals must be computed before calculating standard errors"
         num_params = self.G * self.T + self.N + self.K
         self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
         self._get_analytical_standard_errors()
-        self._get_bootstrap_standard_errors(("beta",), n_boot=n_boot, **kwargs)
+        self._get_bootstrap_standard_errors(("beta",), n_boot=n_boot, n_jobs=boot_n_jobs, **kwargs)
         self._post_fit()  # Set the fit duration and datetime
         return self
 
@@ -647,6 +744,7 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         if self.heterogeneous_beta is False:
             raise ValueError("Homogeneous beta is not supported for the Su and Shi Phillips model")
 
+        boot_n_jobs = kwargs.pop("boot_n_jobs", -1)  # type:ignore
         b, alpha, beta, resid = su_shi_phillips(
             np.squeeze(self.dependent),
             self.exog,
@@ -672,18 +770,48 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         num_params = np.unique_counts(np.round(np.concat([b.ravel(), beta.ravel(), alpha.ravel()]), 3)).counts.sum()
         self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
         self._get_analytical_standard_errors()
-        self._get_bootstrap_standard_errors(("beta",), n_boot=n_boot, **kwargs)
+        self._get_bootstrap_standard_errors(("beta",), n_boot=n_boot, n_jobs=boot_n_jobs, **kwargs)
         self._post_fit()  # Set the fit duration and datetime
         return self
 
     def fit(self, **kwargs):
         """
-        Fits the model to the data
+        Fit the GroupedFixedEffects model to the data.
+
+        This method estimates grouped fixed effects based on the selected model type:
+        - "bonhomme_manresa" implements the algorithm by Bonhomme and Manresa (2015).
+        - "su_shi_phillips" implements the algorithm by Su, Shi, and Phillips (2016).
+
+        Parameters
+        ----------
+        n_boot : int, optional
+            Number of bootstrap replications to compute standard errors. Default is 50.
+
+        For model='bonhomme_manresa':
+            max_iter : int, optional
+                Maximum number of optimization iterations. Default is 10000.
+            tol : float, optional
+                Convergence tolerance for optimization. Default is 1e-6.
+            gfe_iterations : int, optional
+                Number of different starting values for the grouped fixed effects algorithm. Default is 100.
+            enable_vns : bool, optional
+                Whether to use the Variable Neighborhood Search (VNS) algorithm. Default is False.
+                (Not recommended when `heterogeneous_beta=True` due to computational cost.)
+
+        For model='su_shi_phillips':
+            kappa : float, optional
+                Regularization strength for SCAD penalty. Default is 0.1.
+            max_iter : int, optional
+                Maximum number of optimization iterations. Default is 1000.
+            tol : float, optional
+                Convergence tolerance for optimization. Default is 1e-6.
+            only_bfgs : bool, optional
+                Whether to use only the L-BFGS optimizer. If False, alternates between L-BFGS and Nelder-Mead. Default is True.
 
         Returns
         -------
-        self
-            The fitted model
+        self : GroupedFixedEffects
+            The fitted model instance.
         """
         self._pre_fit()
         n_boot = kwargs.pop("n_boot", 50)
@@ -694,6 +822,7 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
 
         raise ValueError("Model must be either 'bonhomme_manresa' or 'su_shi_phillips'")
 
+    # FIXME this could be more generalized I believe
     def _get_analytical_standard_errors_bm(self):
         """
         Computes analytical standard errors for the Bonhomme and Manresa model.
@@ -707,16 +836,16 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         se_alpha = np.zeros((self.G, self.T))  # type:ignore
         se_beta = np.zeros((self.G, self.K))  # type:ignore
 
-        g = self.params["g"]
+        g = self.params["g"] if self.heterogeneous_beta else {0: list(range(self.N))}
         resid = self._resid  # type:ignore
         assert resid is not None, "Residuals must be computed before calculating standard errors"
 
-        for gamma in self.params["g"].keys():
+        for gamma in g.keys():
             se_alpha[gamma] = np.sqrt((resid[g[gamma]] ** 2).mean(axis=0))
 
         self._params_analytical_se = {"alpha": se_alpha}
 
-        for gamma in self.params["g"].keys():
+        for gamma in g.keys():
             x = self.exog[g[gamma]]
             x_bar = self.exog[g[gamma]].mean(axis=0)
             x_diff = x - x_bar[np.newaxis, :, :]
@@ -799,11 +928,11 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         """
         Computes analytical standard errors for the parameters.
         Note: this function will always be called, as the analytical standard errors are always computed
+        Note: this function will only compute the analytical standard errors, it does not return anything
 
         Returns
         -------
-        dict
-            The analytical standard errors for the parameters
+        None
         """
         if self._disable_analytical_se:
             return
@@ -816,6 +945,26 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
 
 
 class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
+    """
+    GroupedInteractiveFixedEffects
+
+    A model for estimating grouped interactive fixed effects in panel data.
+
+    This class extends the grouped fixed effects framework by allowing for interactive effects
+    (latent factors and loadings) that vary across groups. It is suitable for capturing
+    unobserved heterogeneity that follows a low-rank factor structure within each group.
+
+    It supports both heterogeneous and homogeneous slope coefficients (only for Ando & Bai, 2016).
+
+    Example usage:
+        >>> model = GroupedInteractiveFixedEffects(y, x, G=3)
+        >>> model.fit()
+        >>> model.summary()
+
+    After fitting, the model provides access to estimated coefficients, group assignments, latent
+    factors, and residual diagnostics.
+    """
+
     def __init__(
         self,
         dependent: ArrayLike,
@@ -828,6 +977,40 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
         heterogeneous_beta: bool = True,
         **kwargs,
     ):
+        """
+        Initialize the GroupedInteractiveFixedEffects model for panel data analysis.
+
+        This model estimates grouped interactive fixed effects using either the Ando and Bai (2016)
+        or the Su and Ju (2018) estimators. It allows for heterogeneity in slope coefficients across
+        groups and supports group-specific factor structures to model unobserved interactive effects.
+
+        Parameters
+        ----------
+        dependent : ArrayLike
+            A 3D array representing the dependent variable with shape (N, T, 1),
+            where N is the number of individuals and T is the number of time periods.
+        exog : ArrayLike
+            A 3D array representing the exogenous variables with shape (N, T, K),
+            where K is the number of regressors.
+        G : int
+            The number of latent groups to estimate.
+        use_bootstrap : bool, optional
+            Whether to compute bootstrap-based standard errors. Default is False.
+        model : Literal["ando_bai", "su_ju"], optional
+            The estimator to use. Choose between "ando_bai" (default) or "su_ju".
+        GF : ArrayLike, optional
+            An array specifying the number of latent factors for each group. If not provided,
+            a single factor is assumed for each group.
+        R : int, optional
+            The total number of latent factors in the Su and Ju model. If not specified, defaults to G.
+        heterogeneous_beta : bool, optional
+            Whether to allow slope coefficients to vary across groups. Default is True.
+        **kwargs : dict
+            Additional configuration arguments, such as:
+                - hide_progressbar (bool): Whether to suppress progress bars.
+                - disable_analytical_se (bool): Whether to skip analytical SE calculation.
+        """
+
         super().__init__(dependent, exog, use_bootstrap, **kwargs)
 
         self._model_type = model
@@ -839,21 +1022,44 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
         self.GF = (
             GF if GF is not None else np.ones(G, dtype=int)
         )  # NOTE if GF is not defined, we assume all groups have one factor
-        self.R = R if R is not None else 1  # Number of factors, default to 1
+        self.R = R if R is not None else self.G  # Number of factors, default to G
         self.heterogeneous_beta = heterogeneous_beta
 
     # FIXME best to change this into multiple functions
     def fit(self, **kwargs):
         """
-        Fits the model to the data
+        Fit the GroupedInteractiveFixedEffects model to the data.
+
+        This method estimates grouped interactive fixed effects using the selected estimator:
+        - "ando_bai" (Ando & Bai, 2016): Supports both homogeneous and heterogeneous slope coefficients across groups.
+        - "su_ju" (Su & Ju, 2018): Supports only heterogeneous slopes and models a shared factor structure across units.
+
+        It estimates group assignments, coefficients, and latent interactive components, and computes
+        information criteria and standard errors.
+
+        Parameters
+        ----------
+        n_boot : int, optional
+            Number of bootstrap replications to compute standard errors. Default is 50.
+        boot_n_jobs : int, optional
+            Number of parallel jobs for the bootstrap procedure. Default is -1 (use all processors).
+        kwargs : dict, optional
+            Additional arguments passed to the underlying estimator routines.
 
         Returns
         -------
-        self
-            The fitted model
+        self : GroupedInteractiveFixedEffects
+            The fitted model instance.
+
+        Raises
+        ------
+        ValueError
+            If the selected model is not one of "ando_bai" or "su_ju", or if homogeneous beta is requested
+            for "su_ju", which is not supported.
         """
         self._pre_fit()
         n_boot = kwargs.pop("n_boot", 50)
+        boot_n_jobs = kwargs.pop("boot_n_jobs", -1)  # type:ignore
         assert self.GF is not None, "GF must be defined for the model"
         assert isinstance(self.GF, np.ndarray), "GF must be a numpy array"
         if self._model_type == "ando_bai":
@@ -878,7 +1084,7 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
 
             self._get_analytical_standard_errors()
             self._get_bootstrap_standard_errors(
-                ("beta",), n_boot=n_boot, **kwargs  # type:ignore
+                ("beta",), n_boot=n_boot, n_jobs=boot_n_jobs, **kwargs  # type:ignore
             )
 
             self._post_fit()  # Set the fit duration and datetime
@@ -906,7 +1112,7 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
             num_params = np.unique_counts(np.concat([b.ravel(), beta.ravel(), lambdas.ravel()])).counts.sum()
             self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
             self._get_analytical_standard_errors()
-            self._get_bootstrap_standard_errors(("beta",), n_boot=n_boot, **kwargs)
+            self._get_bootstrap_standard_errors(("beta",), n_boot=n_boot, n_jobs=boot_n_jobs, **kwargs)
 
             self._post_fit()  # Set the fit duration and datetime
             return self
@@ -927,12 +1133,12 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
 
         se_beta = np.zeros((self.G, self.K))  # type:ignore
 
-        g = self.params["g"]
+        g = self.params["g"] if self.heterogeneous_beta else {0: list(range(self.N))}
         resid = self._resid  # type:ignore
         assert resid is not None, "Residuals must be computed before calculating standard errors"
         self._params_analytical_se = {}
 
-        for gamma in self.params["g"].keys():
+        for gamma in g.keys():
             assert isinstance(self.GF, np.ndarray), "Group members must be a list of indices"
 
             x = self.exog[g[gamma]]

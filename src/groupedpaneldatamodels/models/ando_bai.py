@@ -5,6 +5,7 @@
 # - Cache np.arange in _get_clusters
 # - Lambda returns all possible factors and not only the ones that are used, which may be confusing
 # - Add docstrings
+# - Upgrade to superfast_lstsq, which is faster than lstsq
 
 from numba import njit
 from numpy.linalg import lstsq
@@ -192,7 +193,33 @@ def _compute_resid(y, x, beta, g, F, Lambda, G, GF, N, T):
 def grouped_interactive_effects(
     y, x, G, GF=None, kappa=0.0, gamma=3.7, tol=1e-6, gife_iterations=100, max_iterations=1000
 ):
-    """Runs GIFE regression"""
+    """
+    Estimates the Grouped Interactive Fixed Effects (GIFE) model with homogeneous slopes.
+
+    This function performs the GIFE estimation process across multiple random initializations
+    and returns the solution with the lowest objective value. The model assumes that slope
+    coefficients are shared across groups (homogeneous).
+
+    Parameters:
+        y (np.ndarray): A 3D array of shape (N, T, 1) containing the dependent variable.
+        x (np.ndarray): A 3D array of shape (N, T, K) containing the independent variables.
+        G (int): The number of groups.
+        GF (array-like, optional): The number of factors per group. If None, defaults to one factor per group.
+        kappa (float, optional): Regularization strength for SCAD penalty. Default is 0.0 (no penalty).
+        gamma (float, optional): SCAD parameter. Default is 3.7.
+        tol (float, optional): Convergence tolerance. Default is 1e-6.
+        gife_iterations (int, optional): Number of initializations for the GIFE estimator. Default is 100.
+        max_iterations (int, optional): Maximum number of iterations within each GIFE run. Default is 1000.
+
+    Returns:
+        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, float, np.ndarray]:
+            - best_beta: Estimated homogeneous coefficients, shape (K, 1)
+            - best_g: Group assignments for each unit, shape (N,)
+            - best_F: Estimated common factors, shape (T, sum(GF))
+            - best_Lambda: Estimated factor loadings, shape (sum(GF), N)
+            - best_objective_value: Final value of the objective function
+            - resid: Residuals of the model, shape (N, T)
+    """
     N, T, K = x.shape
     if GF is None:
         GF = np.array([1] * G)
@@ -393,9 +420,43 @@ def _compute_resid_hetrogeneous(y, x, beta, g, F, Lambda, G, GF, N, T):
 
 
 def grouped_interactive_effects_hetrogeneous(
-    y, x, G, GF=None, kappa=0.0, gamma=3.7, tol=1e-6, gife_iterations=100, max_iter=1000
+    y: np.ndarray,
+    x: np.ndarray,
+    G: int,
+    GF=None,
+    kappa: float = 0.0,
+    gamma: float = 3.7,
+    tol: float = 1e-6,
+    gife_iterations: int = 100,
+    max_iter: int = 1000,
 ):
-    """Runs GIFE regression"""
+    """
+    Estimates the Grouped Interactive Fixed Effects (GIFE) model with heterogeneous slopes.
+
+    This function runs the GIFE estimation procedure multiple times and selects the best solution
+    based on the objective value. The model allows for heterogeneous slope coefficients across groups.
+
+    Parameters:
+        y (np.ndarray): A 3D array of shape (N, T, 1) containing the dependent variable.
+        x (np.ndarray): A 3D array of shape (N, T, K) containing the independent variables.
+        G (int): The number of groups.
+        GF (ArrayLike, optional): The number of factors per group. If None, defaults to one factor per group.
+        kappa (float, optional): Regularization strength for SCAD penalty. Default is 0.0 (no penalty).
+        gamma (float, optional): SCAD parameter. Default is 3.7.
+        tol (float, optional): Convergence tolerance. Default is 1e-6.
+        gife_iterations (int, optional): Number of initializations for the GIFE estimator. Default is 100.
+        max_iter (int, optional): Maximum number of iterations within each GIFE run. Default is 1000.
+
+    Returns:
+        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, float, np.ndarray]:
+            - ordered_beta: Estimated heterogeneous coefficients, shape (K, G)
+            - ordered_g: Group assignments for each unit, shape (N,)
+            - ordered_F: Estimated common factors, shape (T, sum(GF))
+            - best_Lambda: Estimated factor loadings, shape (sum(GF), N)
+            - best_objective_value: Final value of the objective function
+            - resid: Residuals of the model, shape (N, T)
+    """
+
     N, T, K = x.shape
     if GF is None:
         GF = np.array([1] * G)

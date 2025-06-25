@@ -66,7 +66,7 @@ def _generate_initial_estimates(y, x, N, T, K, G):
     return beta_init, alpha_init, mu_init
 
 
-def order_alpha(alpha):
+def _order_alpha(alpha):
     """Reorders the groups based on the first value of alpha"""
     # FIXME this is not the best way to do this
     # But it works for now
@@ -75,25 +75,40 @@ def order_alpha(alpha):
     return ordered_alpha
 
 
-def _compute_resid(y, x, beta, mu):
-    """
-    Compute the residuals of the model.
+def _compute_resid(y, x, beta, alpha, mu):
+    diff = beta[:, :, None] - alpha[:, None, :]
+    dist2 = np.sum(diff**2, axis=0)
+    nearest = np.argmin(dist2, axis=1)
+    beta_rounded = alpha[:, nearest]
 
-    Parameters:
-    y (np.ndarray): The dependent variable.
-    x (np.ndarray): The independent variables.
-    beta (np.ndarray): The coefficients for the independent variables.
-    mu (np.ndarray): The individual effects.
-
-    Returns:
-    np.ndarray: The residuals of the model.
-    """
-    return y - np.sum(x * beta.T[:, None, :], axis=2) - mu
+    return y - np.sum(x * beta_rounded.T[:, None, :], axis=2) - mu
 
 
 def fixed_effects_estimation(
     y, x, N, T, K, G, max_iter=1000, only_bfgs=True, tol=1e-6, use_individual_effects=True, kappa=0.1
 ):
+    """Internal estimation function for Su, Shi and Phillips (2016) model.
+
+    Args:
+        y (np.ndarray): Dependent variable, shape (N, T).
+        x (np.array): Explanatory variables, shape (N, T, K).
+        N (int): Number of individuals (cross-sectional units).
+        T (int): Number of time periods.
+        K (int): Number of explanatory variables.
+        G (int): Number of groups.
+        max_iter (int, optional): Maximum number of iterations. Defaults to 1000.
+        only_bfgs (bool, optional): Only uses BFGS, instead of Nelder-Mead. Defaults to True.
+        tol (float, optional): Acceptable tolerance before stopping the estimation. Defaults to 1e-6.
+        use_individual_effects (bool, optional): Enables indvidual effects. Defaults to True.
+        kappa (float, optional): Penalization parameter. Defaults to 0.1.
+
+    Returns:
+        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+            - beta: Estimated coefficients for each individual, shape (K, N)
+            - mu: Estimated individual fixed effects, shape (N, 1)
+            - alpha: Group-level representative coefficients, shape (K, G)
+            - resid: Residuals of the model, shape (N, T)
+    """
     # FIXME this works, though the code is not very clean
     if use_individual_effects:
         y_demeaned = y - np.mean(y, axis=1, keepdims=True)
@@ -104,7 +119,7 @@ def fixed_effects_estimation(
         )
 
         mu = np.mean(y - np.sum(x * beta.T[:, None, :], axis=2), axis=1, keepdims=True)
-        return beta, mu, order_alpha(alpha), resid
+        return beta, mu, _order_alpha(alpha), resid
 
     beta, alpha, mu = _generate_initial_estimates(y, x, N, T, K, G)
 
@@ -175,10 +190,10 @@ def fixed_effects_estimation(
         last_obj_value = obj_value
 
     if use_individual_effects:
-        resid = _compute_resid(y, x, beta, mu)
+        resid = _compute_resid(y, x, beta, alpha, mu)
         assert mu is not None, "Mu should not be None when use_individual_effects is True"
-        return beta, mu, order_alpha(alpha), resid
+        return beta, mu, _order_alpha(alpha), resid
     else:
         mu = np.zeros((N, 1))
-        resid = _compute_resid(y, x, beta, mu)
-        return beta, mu, order_alpha(alpha), resid
+        resid = _compute_resid(y, x, beta, alpha, mu)
+        return beta, mu, _order_alpha(alpha), resid
