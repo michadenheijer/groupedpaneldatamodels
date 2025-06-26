@@ -28,6 +28,11 @@ import sys
 sys.path.insert(0, os.path.abspath("../../src"))  # so it can find your library
 
 # in conf.py:
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.autosummary", "sphinx.ext.viewcode"]
-
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.napoleon",
+    "sphinx_copybutton",
+]
 html_theme = "sphinx_rtd_theme"

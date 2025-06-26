@@ -1,5 +1,5 @@
 # FIXME documentation not created for now
-# name: Deploy Sphinx documentation to Pages
+name: Deploy Sphinx documentation to Pages
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   pages:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
