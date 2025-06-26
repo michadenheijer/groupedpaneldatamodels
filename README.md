@@ -4,7 +4,7 @@
 
 `groupedpaneldatamodels` is an Open Source Python library that implements multiple Grouped Panel Data Models (GPDMs) for Econometric research. These models offer a middle ground between fully homogeneous (which are often incorrectly specified) and fully heterogeneous (which are often difficult to estimate) by grouping multiple individuals and assuming the same coeficients for all members of the groupings.
 
-## ✨ Features
+## Features
 This package implements the models and algorithms proposed by the following four papers, which each suggest different GPDMS.
 
 * **Grouped Fixed Effects (GFE)**
@@ -18,7 +18,7 @@ This package implements the models and algorithms proposed by the following four
 * Fast NumPy and JIT-compiled Numba core with optional parallel bootstrap for large panels
 * Familiar, `statsmodels`‑like API
 
-## 🛠 Installation
+## Installation
 
 ```bash
 pip install groupedpaneldatamodels
@@ -36,7 +36,7 @@ pip install .
 
 ---
 
-## 🚀 Quick start
+## Quick start
 
 ```python
 import numpy as np
@@ -68,13 +68,13 @@ best = grid_search_by_ic(
 print(best.G)          # optimal group count
 ```
 
-## 📚 Documentation
+## Documentation
 
 Full API reference, tutorials and benchmarks live at
 <https://groupedpaneldatamodels.michadenheijer.com>
 
 
-## 🔬 Simulation evidence
+## Simulation evidence
 
 A simulation study has been done for the Master's thesis creating this package. This thesis has shown that this package
 can succesfully reproduce the properties of the underlying estimators and can reduce the RMSE compared to a fully heterogeneous
@@ -82,7 +82,7 @@ model when `N` is large and `T` is small.
 
 ---
 
-## 📖 Citation
+## Citation
 
 Please cite the thesis if you use `groupedpaneldatamodels`:
 
@@ -100,6 +100,6 @@ Please cite the thesis if you use `groupedpaneldatamodels`:
 
 ---
 
-## 📝 License
+## License
 
 Released under the **MIT License**. See `LICENSE` for details.
