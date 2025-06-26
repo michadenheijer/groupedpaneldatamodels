@@ -10,16 +10,17 @@ date-released: 2025-07-01
 license: MIT
 repository-code: https://github.com/michadenheijer/groupedpaneldatamodels
 url: https://groupedpaneldatamodels.michadenheijer.com
-type: thesis
+type: software
 
 preferred-citation:
-  type: mastersthesis
+  type: thesis
+  thesis-type: "Master's thesis"
   title: "groupedpaneldatamodels: A Python Library for Grouped Fixed and Interactive Effects Models"
   authors:
     - family-names: den Heijer
       given-names: Micha
       orcid: https://orcid.org/0009-0009-5151-3897
   year: 2025
-  month: July
+  month: 7
   school: Vrije Universiteit Amsterdam
   url: https://groupedpaneldatamodels.michadenheijer.com/_static/thesis.pdf
