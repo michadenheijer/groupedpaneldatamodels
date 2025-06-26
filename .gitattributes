@@ -1,5 +1,7 @@
 # Exclude all non-source folders from language statistics
 docs/** linguist-vendored
+development/** linguist-vendored
+estimates/** linguist-vendored
 examples/** linguist-vendored
 notebooks/** linguist-vendored
 tests/** linguist-vendored
