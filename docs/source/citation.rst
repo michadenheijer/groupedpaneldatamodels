@@ -15,7 +15,7 @@ If you use the `groupedpaneldatamodels` package in your research, please cite th
         year        = {2025},
         month       = {July},
         date        = {2025-07-01},
-        url         = {https://groupedpaneldatamodels.michadenheijer.com/thesis.pdf}
+        url         = {https://groupedpaneldatamodels.michadenheijer.com/_static/thesis.pdf}
     }
 
 .. - Bonhomme and Manresa (2015): `Grouped Patterns of Heterogeneity in Panel Data <https://doi.org/10.1016/j.econlet.2015.02.003>`_
