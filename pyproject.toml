@@ -30,6 +30,7 @@ dependencies = [
     "skglm~=0.4",
     "numba~=0.61.0",
     "statsmodels~=0.14.0",
+    "tqdm~=4.67.1",
 ]
 
 [project.optional-dependencies]
