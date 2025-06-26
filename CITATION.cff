@@ -3,24 +3,23 @@ message: "If you use this package, please cite the following work."
 authors:
   - family-names: den Heijer
     given-names: Micha
-    orcid: https://orcid.org/0009-0009-5151-3897  # Replace with your actual ORCID
+    orcid: https://orcid.org/0009-0009-5151-3897
 title: "groupedpaneldatamodels: A Python Library for Grouped Fixed and Interactive Effects Models"
 version: "0.1.0"
 date-released: 2025-07-01
 license: MIT
 repository-code: https://github.com/michadenheijer/groupedpaneldatamodels
 url: https://groupedpaneldatamodels.michadenheijer.com
-type: software
+type: thesis
 
 preferred-citation:
   type: mastersthesis
   title: "groupedpaneldatamodels: A Python Library for Grouped Fixed and Interactive Effects Models"
-  author:
+  authors:
     - family-names: den Heijer
       given-names: Micha
       orcid: https://orcid.org/0009-0009-5151-3897
-  school: Vrije Universiteit Amsterdam
   year: 2025
   month: July
-  date: 2025-07-01
+  school: Vrije Universiteit Amsterdam
   url: https://groupedpaneldatamodels.michadenheijer.com/_static/thesis.pdf

@@ -57,12 +57,11 @@ betas = gife.params["beta"]
 ### Selecting the number of groups
 
 ```python
-from groupedpaneldatamodels import grid_search_by_ic
-
-best = grid_search_by_ic(
+best = gpdm.grid_search_by_ic(
     gpdm.GroupedFixedEffects,
     param_ranges={"G": range(1, 7)},
     init_params={"dependent": Y, "exog": X},
+    pit_params={"gife_iterations": 100},
     ic_criterion="BIC"
 )
 print(best.G)          # optimal group count
@@ -70,11 +69,11 @@ print(best.G)          # optimal group count
 
 ## Documentation
 
-Full API reference, tutorials and benchmarks live at
+An API reference with proper installation and guidelines is available at
 <https://groupedpaneldatamodels.michadenheijer.com>
 
 
-## Simulation evidence
+## Simulation Study
 
 A simulation study has been done for the Master's thesis creating this package. This thesis has shown that this package
 can succesfully reproduce the properties of the underlying estimators and can reduce the RMSE compared to a fully heterogeneous
@@ -102,4 +101,4 @@ Please cite the thesis if you use `groupedpaneldatamodels`:
 
 ## License
 
-Released under the **MIT License**. See `LICENSE` for details.
+Released under the MIT License. See [LICENSE](LICENSE) for details.
