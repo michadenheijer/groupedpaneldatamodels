@@ -1,0 +1,11 @@
+# Exclude all non-source folders from language statistics
+docs/** linguist-vendored
+examples/** linguist-vendored
+notebooks/** linguist-vendored
+tests/** linguist-vendored
+*.ipynb linguist-vendored
+*.rst linguist-vendored
+*.md linguist-vendored
+
+# Ensure src/ is included in language stats (default behavior, but explicit is better)
+src/** linguist-detectable
