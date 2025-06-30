@@ -34,5 +34,12 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
+    "sphinx_design",
 ]
 html_theme = "sphinx_rtd_theme"
+
+autodoc_default_options = {
+    "members": True,  # include public methods/attributes
+    "undoc-members": True,  # include ones that lack docstrings
+    "inherited-members": True,  # pull in stuff from parents
+}

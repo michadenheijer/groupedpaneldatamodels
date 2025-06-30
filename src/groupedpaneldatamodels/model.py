@@ -292,7 +292,6 @@ class _GroupedPanelModelBase:  # type:ignore
         params: tuple[str], required, displays which parameters to compute the bootstrap standard errors for
         n_boot: int, optional, the number of bootstrap samples to use, default is 50
         require_deepcopy: bool, optional, whether to require a deepcopy of the model, default is False
-        balanced: bool, optional, whether to use balanced bootstrap sampling, default is False, not implemented yet
         **kwargs: Additional keyword arguments that can be passed to the model fitting function.
 
         Returns
@@ -487,8 +486,8 @@ class _GroupedPanelModelBase:  # type:ignore
             As this is not implemented yet.
 
         Raises:
-            ValueError: _Model has not been fitted yet_
-            NotImplementedError: _Standard errors type other than 'auto' is not implemented yet, you can manually view them using `model.params_bootstrap_standard_errors` or `model.params_analytical_standard_errors`_
+            ValueError: Model has not been fitted yet
+            NotImplementedError: Standard errors type other than 'auto' is not implemented yet, you can manually view them using `model.params_bootstrap_standard_errors` or `model.params_analytical_standard_errors`_
 
         Returns:
             Summary: A summary object containing the model information, parameters, and standard errors.
@@ -631,8 +630,9 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
     """
     GroupedFixedEffects
 
-    A model for estimating grouped fixed effects in panel data, supporting both the
-    Bonhomme and Manresa (2015) and Su, Shi, and Phillips (2016) estimators.
+    Class for estimating grouped fixed effects in panel data models.
+
+    Supports both Bonhomme and Manresa (2015) and Su, Shi, and Phillips (2016) estimators.
 
     This class clusters units into a specified number of latent groups and estimates either:
     - Group-specific slope coefficients (heterogeneous), or
@@ -947,7 +947,9 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
     """
     GroupedInteractiveFixedEffects
 
-    A model for estimating grouped interactive fixed effects in panel data.
+    Class for estimating grouped interactive fixed effects in panel data.
+
+    Implements the estimators by Ando and Bai (2016) and Su and Ju (2018).
 
     This class extends the grouped fixed effects framework by allowing for interactive effects
     (latent factors and loadings) that vary across groups. It is suitable for capturing

@@ -2,3 +2,4 @@ sphinx>=7.0
 sphinx-rtd-theme
 sphinx-copybutton
 sphinx-autobuild
+sphinx-design>=0.4
