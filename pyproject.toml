@@ -24,13 +24,13 @@ classifiers = [
 requires-python = ">=3.11" # Chosen somewhat randomly
 dynamic = ["version"]
 dependencies = [
-    "numpy~=2.0.0",
-    "scipy~=1.15.2",
-    "scikit-learn~=1.6.1",
+    "numpy>=2.0.0,<3.0.0",
+    "scipy>=1.15.0,<2.0.0",
+    "scikit-learn>=1.6.0,<2.0.0",
     "skglm~=0.4",
-    "numba~=0.61.0",
-    "statsmodels~=0.14.0",
-    "tqdm~=4.67.1",
+    "numba>=0.61.0,<1.0.0",
+    "statsmodels>=0.14.0,<1.0.0",
+    "tqdm>=4.0.0,<5.0.0",
 ]
 
 [project.optional-dependencies]
