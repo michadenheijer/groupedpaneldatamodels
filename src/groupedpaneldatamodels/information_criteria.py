@@ -77,14 +77,16 @@ def compute_statistics(n: int, k: int, resid: np.ndarray, **kwargs):
             - "HQIC": Hannan-Quinn Information Criterion (if computed)
     """
     var_resid = np.var(resid, ddof=k)
-    var_biased_resid = np.mean(resid**2)
+    var_biased_resid: float = np.mean(resid**2)  # type:ignore
 
-    return {
+    res = {
         "sigma^2": var_resid,
         "AIC": compute_aic(n, k, var_biased_resid) if not kwargs.get("no_aic", False) else None,
         "BIC": compute_bic(n, k, var_biased_resid) if not kwargs.get("no_bic", False) else None,
         "HQIC": compute_hqic(n, k, var_biased_resid) if kwargs.get("include_hqic", False) else None,
     }
+
+    return res
 
 
 def grid_search_by_ic(

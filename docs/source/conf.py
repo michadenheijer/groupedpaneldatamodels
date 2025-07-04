@@ -43,3 +43,5 @@ autodoc_default_options = {
     "undoc-members": True,  # include ones that lack docstrings
     "inherited-members": True,  # pull in stuff from parents
 }
+
+autoclass_content = "both"

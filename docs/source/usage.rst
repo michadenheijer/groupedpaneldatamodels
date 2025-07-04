@@ -262,10 +262,10 @@ Advanced configuration
 * **Bootstrap control**, pass ``use_bootstrap=True`` to the constructor and ``n_boot=500`` (plus ``boot_n_jobs=-1`` for parallelisation) in ``fit`` for high‑precision inference.
 * **Reproducibility**, provide ``random_state=42`` to seed all stochastic components including bootstrap resampling.
 * **Silent mode**,  set ``hide_progressbar=True`` to suppress progress bars and ``disable_analytical_se=True`` when only bootstrap SEs are needed.
-* **Prediction & diagnostics**, after fitting, you can inspect residuals via ``model._resid``.
+* **Prediction & diagnostics**, after fitting, you can inspect residuals via ``model.resid``.
 
 Further reading
 ---------------
 
-You can find more details in the :ref:`API documentation <api>`. Additionally, you can read the thesis this package is based on,
+You can find more details in the :ref:`API documentation <api_modules>`. Additionally, you can read the thesis this package is based on,
 which is `available as a PDF <_static/thesis.pdf>`_.

@@ -220,6 +220,25 @@ class _GroupedPanelModelBase:  # type:ignore
         """
         return {param: self.params[param] / se for param, se in self.params_standard_errors.items()}
 
+    @property
+    def resid(self) -> np.ndarray:
+        """
+        Returns the residuals of the model
+
+        Returns
+        -------
+        ArrayLike
+            The residuals of the model
+
+        Raises
+        ------
+        ValueError
+            If the model has not been fitted yet or residuals are not available for this model.
+        """
+        if self._resid is None:
+            raise ValueError("Model has not been fitted yet or residuals are not available for this model")
+        return self._resid
+
     def p_values(self) -> dict:
         """
         Returns the p-values of the parameters
@@ -658,6 +677,7 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         model: Literal["bonhomme_manresa", "su_shi_phillips"] = "bonhomme_manresa",
         heterogeneous_beta: bool = True,
         entity_effects: bool = False,
+        kappa: float = 0.1,
         **kwargs,
     ):
         """
@@ -675,6 +695,7 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
             model (Literal["bonhomme_manresa", "su_shi_phillips"], optional): Which estimator to use: "bonhomme_manresa" (default) or "su_shi_phillips".
             heterogeneous_beta (bool, optional): Whether the coefficients β should be allowed to differ across groups. If False, they are homogeneous. Defaults to True.
             entity_effects (bool, optional): Whether to include individual (entity-specific) fixed effects in the estimation. Recommended for "su_shi_phillips". Defaults to False.
+            kappa (float, optional): Regularization strength for SCAD penalty. Default is 0.1.
 
         Raises:
             ValueError: If the specified model is not supported.
@@ -686,6 +707,12 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         self._model_type = model
         if self._model_type not in ["bonhomme_manresa", "su_shi_phillips"]:
             raise ValueError("Model must be either 'bonhomme_manresa' or 'su_shi_phillips'")
+
+        if self._model_type == "bonhomme_manresa":
+            if kappa != 0.1:  # NOTE 0.1 is the default value for kappa
+                raise ValueError("kappa is not supported for the Bonhomme and Manresa model")
+
+        self._kappa = kappa  # Regularization strength for SCAD penalty, only used in Su and Shi Phillips
 
         self.G = int(G)
         self.heterogeneous_beta = heterogeneous_beta
@@ -752,6 +779,7 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
             self.K,
             self.G,
             use_individual_effects=self._entity_effects,
+            kappa=self._kappa,
             **kwargs,
         )
         self._params = {"beta": beta.T, "b": b, "alpha": alpha}
@@ -766,7 +794,7 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
         g_members = {int(group): np.where(g == group)[0].tolist() for group in np.unique(g)}
         self._params["g"] = g_members
 
-        num_params = np.unique_counts(np.round(np.concat([b.ravel(), beta.ravel(), alpha.ravel()]), 3)).counts.sum()
+        num_params = np.unique_counts(np.round(np.concat([b.ravel(), beta.ravel(), alpha.ravel()]), 2)).counts.sum()
         self._IC = compute_statistics(self.N * self.T, num_params, resid, include_hqic=True)
         self._get_analytical_standard_errors()
         self._get_bootstrap_standard_errors(("beta",), n_boot=n_boot, n_jobs=boot_n_jobs, **kwargs)
@@ -798,8 +826,6 @@ class GroupedFixedEffects(_GroupedPanelModelBase):
                 (Not recommended when `heterogeneous_beta=True` due to computational cost.)
 
         For model='su_shi_phillips':
-            kappa : float, optional
-                Regularization strength for SCAD penalty. Default is 0.1.
             max_iter : int, optional
                 Maximum number of optimization iterations. Default is 1000.
             tol : float, optional
@@ -1142,7 +1168,25 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
         for gamma in g.keys():
             assert isinstance(self.GF, np.ndarray), "Group members must be a list of indices"
 
+            GF = np.array(self.GF, dtype=int)
+
             x = self.exog[g[gamma]]
+            # F = self.params["F"]
+            # F_g = F[:, self.GF[:gamma].sum() : self.GF[: gamma + 1].sum()].T
+            # M_F = np.identity(self.T) - F_g @ np.linalg.pinv(F_g.T @ F_g) @ F_g.T
+            # Lambda = self.params["Lambda"]
+            # Lambda_g = Lambda[GF[:gamma].sum() : GF[: gamma + 1].sum(), :].T
+            # N_g = len(g[gamma])
+            # z_init = M_F @ x
+            # z_sub = np.zeros_like(z_init)
+
+            # for i in range(N_g):
+            #     for j in range(N_g):
+            #         c = Lambda_g[i].T @ np.linalg.pinv(Lambda_g.T @ Lambda_g) @ Lambda_g[j]
+            #         z_sub[i] = c * z_init[j]
+
+            # z = z_init - z_sub
+            # x_diff = z
 
             x_bar = self.exog[g[gamma]].mean(axis=0)
             x_diff = x - x_bar[np.newaxis, :, :]
@@ -1156,6 +1200,7 @@ class GroupedInteractiveFixedEffects(_GroupedPanelModelBase):
 
             resid_g = resid[g[gamma]]
             total_sum_omega = np.zeros((self.K, self.K))
+
             for i in range(x.shape[0]):
                 for t in range(self.T):
                     for s in range(self.T):
