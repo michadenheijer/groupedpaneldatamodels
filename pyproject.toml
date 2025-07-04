@@ -43,6 +43,10 @@ Tracker = "https://github.com/michadenheijer/groupedpaneldatamodels/issues"
 
 [tool.flit.module]
 name = "groupedpaneldatamodels"
+directory = "src"
+
+[tool.flit.sdist]
+exclude = ["docs/", "scripts/", "tests/", "*.ipynb", "estimates/"]
 
 [tool.black]
 line-length = 120
