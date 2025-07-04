@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+estimates/*
+development/generated_data/*
+.DS_Store

@@ -32,5 +32,5 @@ from .model import GroupedFixedEffects, GroupedInteractiveFixedEffects
 from .information_criteria import grid_search_by_ic
 
 
-__version__ = "0.1.0"  # Version of the package
+__version__ = "0.1.1"  # Version of the package
 __all__ = ["GroupedFixedEffects", "GroupedInteractiveFixedEffects", "grid_search_by_ic"]  # Name them here
